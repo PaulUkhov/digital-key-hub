@@ -19,10 +19,6 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
-    private String firstName;
-
-    private String lastName;
-
     @Column(nullable = false)
     private String password;
 

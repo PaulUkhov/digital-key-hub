@@ -1,6 +1,5 @@
 package com.audio.service;
 
-
 import com.audio.dto.ProfileDto;
 import com.audio.dto.RegisterDto;
 import com.audio.entity.ProfileEntity;
@@ -46,9 +45,11 @@ public class UserService {
         return profileRepo.save(profile);
     }
 
+    @Transactional
     public void updateAvatar(UUID userId, MultipartFile image) {
         // TODO
     }
+
 
     @Transactional(readOnly = true)
     public Optional<UserEntity> findByEmail(String email) {
