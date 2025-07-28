@@ -9,13 +9,14 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>digitalkeyhub-core</module>
         <module>digitalkeyhub-api</module>
         <module>digitalkeyhub-security</module>
         <module>digitalkeyhub-app</module>
-        <module>digitalkeyhub-storage</module>
         <module>digitalkeyhub-notification</module>
         <module>digitalkeyhub-payment</module>
+        <module>digitalkeyhub-user</module>
+        <module>digitalkeyhub-comment</module>
+        <module>digitalkeyhub-product</module>
     </modules>
 
     <properties>
