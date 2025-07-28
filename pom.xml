@@ -17,6 +17,7 @@
         <module>digitalkeyhub-user</module>
         <module>digitalkeyhub-comment</module>
         <module>digitalkeyhub-product</module>
+        <module>digitalkeyhub-storage</module>
     </modules>
 
     <properties>
