@@ -39,6 +39,12 @@
             <version>1.18.38</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.audio</groupId>
+            <artifactId>digitalkeyhub-storage</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

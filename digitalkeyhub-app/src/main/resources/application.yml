@@ -3,3 +3,4 @@ spring:
     import:
       - classpath:application.yml          # Основной конфиг
       - classpath:application-user.yml     # Конфиг из модуля user
+      - classpath:application-storage.yml  # Конфиг из модуля storage
