@@ -1,4 +1,4 @@
-package PACKAGE_NAME;
+package com.audio.exception;
 
 public class AuthException extends RuntimeException {
   public AuthException(String message) {
