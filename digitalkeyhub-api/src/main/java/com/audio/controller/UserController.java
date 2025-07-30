@@ -4,7 +4,6 @@ import com.audio.dto.ProfileDto;
 import com.audio.dto.ProfileResponseDto;
 import com.audio.dto.RegisterDto;
 import com.audio.dto.UserResponseDto;
-import com.audio.exception.ProfileNotFoundException;
 import com.audio.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
