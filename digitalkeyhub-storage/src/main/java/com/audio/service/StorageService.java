@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 
 @Service
-public class StorageService {
+public class StorageService implements FileStorageService {
     private final MinioClient minioClient;
     private final String bucketName;
 

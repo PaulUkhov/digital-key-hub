@@ -25,7 +25,7 @@ public class UserService {
     private final UserRepository userRepo;
     private final ProfileRepository profileRepo;
     private final UserMapper userMapper;
-    private final StorageService storageService;
+    private final FileStorageService storageService;
 
     @Transactional
     public UserResponseDto createUser(RegisterDto dto) {
@@ -77,7 +77,7 @@ public class UserService {
         }
     }
 
-    private String getFileExtension(String filename) {
+    String getFileExtension(String filename) {
         if (filename == null) {
             return "jpg";
         }
