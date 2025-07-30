@@ -63,18 +63,17 @@ public class JwtService {
         }
     }
     public Authentication parse(String token) {
-        // Расшифровываем токен
+
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key) // твой секретный ключ
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
 
-        String username = claims.getSubject(); // стандартное поле subject = username
+        String username = claims.getSubject();
         @SuppressWarnings("unchecked")
-        List<String> roles = claims.get("roles", List.class); // если ты их туда записывал
+        List<String> roles = claims.get("roles", List.class);
 
-        // Преобразуем роли в GrantedAuthority
         List<GrantedAuthority> authorities = roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
