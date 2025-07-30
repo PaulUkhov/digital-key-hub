@@ -1,4 +1,3 @@
 package dtoSecurity;
 
-public record AuthResponse (String token, String refreshToken) {
-}
+public record AuthResponse (String token, String refreshToken) {}

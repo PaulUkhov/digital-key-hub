@@ -81,5 +81,4 @@ public class JwtService {
 
         return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
-
 }
