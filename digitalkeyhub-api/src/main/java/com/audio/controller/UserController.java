@@ -32,7 +32,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> getUser(@PathVariable UUID userId) {
+    public ResponseEntity<UserResponseDto> getUser(
+            @PathVariable("userId") UUID userId) {
         return userService.findById(userId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -40,7 +41,7 @@ public class UserController {
 
     @GetMapping("/search")
     public ResponseEntity<UserResponseDto> getUserByEmail(
-            @RequestParam @Email @NotBlank String email) {
+            @RequestParam(name = "email") @Email @NotBlank String email) {
         return userService.findByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -48,14 +49,14 @@ public class UserController {
 
     @PatchMapping("/{userId}/profile")
     public ResponseEntity<ProfileResponseDto> updateProfile(
-            @PathVariable UUID userId,
+            @PathVariable("userId") UUID userId,
             @Valid @RequestBody ProfileDto dto) {
         return ResponseEntity.ok(userService.updateProfile(userId, dto));
     }
 
     @PatchMapping("/{userId}/avatar")
     public ResponseEntity<ProfileResponseDto> updateAvatar(
-            @PathVariable UUID userId,
+            @PathVariable("userId") UUID userId,
             @RequestParam("file") @NotNull MultipartFile file) {
         return ResponseEntity.ok(userService.updateAvatar(userId, file));
     }

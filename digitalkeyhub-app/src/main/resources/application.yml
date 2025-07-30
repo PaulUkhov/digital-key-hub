@@ -1,0 +1,5 @@
+spring:
+  config:
+    import:
+      - classpath:application.yml          # Основной конфиг
+      - classpath:application-user.yml     # Конфиг из модуля user
