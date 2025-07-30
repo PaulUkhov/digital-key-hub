@@ -21,9 +21,11 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepo;
     private final ProfileRepository profileRepo;
     private final UserMapper userMapper;
+    private final StorageService storageService;
 
     @Transactional
     public UserResponseDto createUser(RegisterDto dto) {
@@ -56,9 +58,34 @@ public class UserService {
         ProfileEntity profile = profileRepo.findByUserId(userId)
                 .orElseThrow(() -> new ProfileNotFoundException(userId));
 
-        // TODO: реализовать логику обновления аватара
+        try {
+            if (profile.getAvatarUrl() != null) {
+                storageService.deleteFile(profile.getAvatarUrl());
+            }
 
-        return userMapper.toProfileResponseDto(profile);
+            String extension = getFileExtension(image.getOriginalFilename());
+            String newFileName = "avatar_" + userId + "_" + System.currentTimeMillis() + "." + extension;
+
+            String filePath = storageService.uploadFile(image, newFileName);
+
+            profile.setAvatarUrl(filePath);
+            ProfileEntity savedProfile = profileRepo.save(profile);
+
+            return userMapper.toProfileResponseDto(savedProfile);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update avatar", e);
+        }
+    }
+
+    private String getFileExtension(String filename) {
+        if (filename == null) {
+            return "jpg";
+        }
+        int lastDot = filename.lastIndexOf('.');
+        if (lastDot == -1) {
+            return "jpg";
+        }
+        return filename.substring(lastDot + 1);
     }
 
     @Transactional(readOnly = true)
