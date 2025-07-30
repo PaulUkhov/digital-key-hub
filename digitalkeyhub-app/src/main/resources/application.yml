@@ -1,6 +1,10 @@
 spring:
+  profiles:
+    active: local  # Профиль по умолчанию
   config:
     import:
-      - classpath:application.yml          # Основной конфиг
-      - classpath:application-user.yml     # Конфиг из модуля user
-      - classpath:application-storage.yml  # Конфиг из модуля storage
+      - classpath:application-${spring.profiles.active}.yml
+      - classpath:application-user.yml
+      - classpath:application-user-${spring.profiles.active}.yml
+      - classpath:application-storage.yml
+      - classpath:application-storage-${spring.profiles.active}.yml
