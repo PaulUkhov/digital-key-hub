@@ -23,7 +23,8 @@ public class UserMapper {
         return new ProfileResponseDto(
                 profile.getId(),
                 profile.getName(),
-                profile.getBio()
+                profile.getBio(),
+                profile.getAvatarUrl()
         );
     }
 }
