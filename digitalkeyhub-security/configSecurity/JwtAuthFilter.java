@@ -24,10 +24,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (token != null && jwtService.isValid(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
             Authentication auth = jwtService.parse(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
+
         }
         filterChain.doFilter(request, response);
     }
-
 
     private String extractToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
