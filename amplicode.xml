@@ -12,6 +12,7 @@
       <persistence-unit moduleName="digitalkeyhub-storage" name="Default" />
       <persistence-unit moduleName="digitalkeyhub-security" name="Default" />
       <persistence-unit moduleName="digitalkeyhub-product" name="Default" />
+      <persistence-unit moduleName="digitalkeyhub-order" name="Default" />
     </persistence-units>
   </component>
 </project>
