@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -31,7 +31,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    public ResponseEntity<ProductResponseDto> getProduct(@PathVariable UUID id) {
+    public ResponseEntity<ProductResponseDto> getProduct(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
@@ -46,10 +46,10 @@ public class ProductController {
     @Transactional(readOnly = true)
     public ResponseEntity<Page<ProductResponseDto>> searchProducts(
             @PageableDefault(size = 20) Pageable pageable,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(required = false) Boolean isActive) {
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
+            @RequestParam(name = "isActive", required = false) Boolean isActive) {
 
         return ResponseEntity.ok(productService.searchProducts(
                 name, minPrice, maxPrice, isActive, pageable));
@@ -57,46 +57,46 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody ProductUpdateDto updateDto) {
         return ResponseEntity.ok(productService.updateProduct(id, updateDto));
     }
 
     @PutMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductResponseDto> updateProductPhoto(
-            @PathVariable UUID id,
-            @RequestParam("file") MultipartFile file) {
+            @PathVariable("id") UUID id,
+            @RequestParam(name = "file") MultipartFile file) {
         return ResponseEntity.ok(productService.updateProductPhoto(id, file));
     }
 
     @DeleteMapping("/{id}/photo")
-    public ResponseEntity<ProductResponseDto> deleteProductPhoto(@PathVariable UUID id) {
+    public ResponseEntity<ProductResponseDto> deleteProductPhoto(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(productService.deleteProductPhoto(id));
     }
 
     @GetMapping(value = "/{id}/photo", produces = MediaType.IMAGE_JPEG_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<byte[]> getProductPhoto(@PathVariable UUID id) {
+    public ResponseEntity<byte[]> getProductPhoto(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(productService.getProductPhoto(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<ProductResponseDto> setProductActiveStatus(
-            @PathVariable UUID id,
-            @RequestParam boolean isActive) {
+            @PathVariable("id") UUID id,
+            @RequestParam(name = "isActive") boolean isActive) {
         return ResponseEntity.ok(productService.setProductActiveStatus(id, isActive));
     }
 
     @PatchMapping("/{id}/stock")
     public ResponseEntity<ProductResponseDto> updateStockQuantity(
-            @PathVariable UUID id,
-            @RequestParam int quantity) {
+            @PathVariable("id") UUID id,
+            @RequestParam(name = "quantity") int quantity) {
         return ResponseEntity.ok(productService.updateStockQuantity(id, quantity));
     }
 }

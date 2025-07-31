@@ -11,6 +11,8 @@
     <file url="file://$PROJECT_DIR$/digitalkeyhub-core/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-notification/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-notification/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/digitalkeyhub-order/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/digitalkeyhub-order/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-payment/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-payment/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-product/src/main/java" charset="UTF-8" />
