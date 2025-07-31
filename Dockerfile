@@ -16,6 +16,7 @@ COPY digitalkeyhub-comment digitalkeyhub-comment
 COPY digitalkeyhub-payment digitalkeyhub-payment
 COPY digitalkeyhub-product digitalkeyhub-product
 COPY digitalkeyhub-notification digitalkeyhub-notification
+COPY digitalkeyhub-order digitalkeyhub-order
 
 # 3. Собираем только нужные модули с их зависимостями
 RUN mvn clean package -pl digitalkeyhub-app -am -DskipTests
