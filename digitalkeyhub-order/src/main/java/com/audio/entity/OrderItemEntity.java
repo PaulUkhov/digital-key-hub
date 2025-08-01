@@ -25,12 +25,9 @@ public class OrderItemEntity {
     @Column(name = "product_id", nullable = false)
     private UUID productId;
 
-    @Column(nullable = false)
     private int quantity;
 
-    @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
 
-    @Column(nullable = false)
     private BigDecimal subtotal;
 }

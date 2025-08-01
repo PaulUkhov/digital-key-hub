@@ -1,5 +1,6 @@
 package com.audio.entity;
 
+import com.audio.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,9 +31,7 @@ public class OrderEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

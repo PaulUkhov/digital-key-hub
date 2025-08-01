@@ -21,32 +21,28 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(
             @RequestBody @Valid OrderCreateDto createDto,
-            // TODO @AuthenticationPrincipal
-            UUID userId) {
+            @RequestParam("userId") UUID userId) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(orderService.createOrder(createDto, userId));
     }
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDto> getOrder(
-            @PathVariable UUID orderId,
-           // TODO @AuthenticationPrincipal
-            UUID userId) {
+            @PathVariable("orderId") UUID orderId,
+            @RequestParam("userId") UUID userId) {
         return ResponseEntity.ok(orderService.getOrder(orderId, userId));
     }
 
     @GetMapping
     public ResponseEntity<List<OrderDto>> getUserOrders(
-           // TODO  @AuthenticationPrincipal
-            UUID userId) {
+            @RequestParam("userId") UUID userId) {
         return ResponseEntity.ok(orderService.getUserOrders(userId));
     }
 
     @PostMapping("/{orderId}/cancel")
     public ResponseEntity<Void> cancelOrder(
-            @PathVariable UUID orderId,
-            //TODO @AuthenticationPrincipal
-            UUID userId) {
+            @PathVariable("orderId") UUID orderId,
+            @RequestParam("userId") UUID userId) {
         orderService.cancelOrder(orderId, userId);
         return ResponseEntity.noContent().build();
     }

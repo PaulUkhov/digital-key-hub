@@ -12,3 +12,5 @@ spring:
       - classpath:application-product-${spring.profiles.active}.yml
       - classpath:application-order.yml
       - classpath:application-order-${spring.profiles.active}.yml
+      - classpath:application-payment.yml
+      - classpath:application-payment-${spring.profiles.active}.yml

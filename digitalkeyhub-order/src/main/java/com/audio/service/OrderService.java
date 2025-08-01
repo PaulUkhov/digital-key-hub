@@ -2,6 +2,7 @@ package com.audio.service;
 
 import com.audio.dto.*;
 import com.audio.entity.*;
+import com.audio.enums.OrderStatus;
 import com.audio.exception.*;
 import com.audio.mapper.OrderMapper;
 import com.audio.repository.OrderRepository;
@@ -20,6 +21,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductService productService;
     private final OrderMapper orderMapper;
+
 
     @Transactional
     public OrderDto createOrder(OrderCreateDto orderCreateDto, UUID userId) {
@@ -103,7 +105,7 @@ public class OrderService {
                 .build();
     }
 
-    private BigDecimal calculateTotalAmount(List<OrderItemEntity> items) {
+    BigDecimal calculateTotalAmount(List<OrderItemEntity> items) {
         return items.stream()
                 .map(OrderItemEntity::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -114,5 +116,30 @@ public class OrderService {
             int quantityChange = isRestock ? item.getQuantity() : -item.getQuantity();
             productService.updateStockQuantity(item.getProductId(), quantityChange);
         });
+    }
+
+    @Transactional
+    public void completeOrder(UUID orderId) {
+        OrderEntity order = getOrderEntity(orderId);
+        order.setStatus(OrderStatus.PAID);
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    public void failOrder(UUID orderId, String reason) {
+        OrderEntity order = getOrderEntity(orderId);
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+        updateProductStocks(order.getItems(), true);
+    }
+
+    public OrderEntity getOrderEntity(UUID orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+    }
+
+    public OrderEntity getOrderEntity(UUID orderId, UUID userId) {
+        return orderRepository.findByIdAndUserId(orderId, userId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 }
