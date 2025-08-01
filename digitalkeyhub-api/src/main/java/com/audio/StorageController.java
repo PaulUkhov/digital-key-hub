@@ -1,4 +1,4 @@
-package com.audio.controller;
+package com.audio;
 
 import com.audio.service.StorageService;
 import lombok.RequiredArgsConstructor;
