@@ -1,7 +1,5 @@
 package com.audio.dto;
 
-import com.audio.entity.OrderEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -23,4 +21,9 @@ public class OrderItemDto {
     private BigDecimal unitPrice;
 
     private BigDecimal subtotal;
+
+    public OrderItemDto(UUID testProductId, int quantity) {
+        this.id = testProductId;
+        this.productId = testProductId;
+    }
 }

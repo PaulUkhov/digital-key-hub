@@ -4,7 +4,6 @@ import com.audio.dto.*;
 import com.audio.entity.ProductEntity;
 import com.audio.exception.ProductNotFoundException;
 import com.audio.mapper.ProductMapper;
-import com.audio.mapper.ProductMapperImpl;
 import com.audio.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +42,7 @@ class ProductServiceTest {
     private MultipartFile multipartFile;
 
     @InjectMocks
-    private ProductService productService;
+    private ProductServiceImpl productService;
 
     private final UUID productId = UUID.randomUUID();
     private final ProductEntity productEntity = new ProductEntity();

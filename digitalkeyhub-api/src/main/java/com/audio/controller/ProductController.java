@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -65,7 +66,7 @@ public class ProductController {
     @PutMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProductResponseDto> updateProductPhoto(
             @PathVariable("id") UUID id,
-            @RequestParam(name = "file") MultipartFile file) {
+            @RequestParam(name = "file") MultipartFile file) throws IOException {
         return ResponseEntity.ok(productService.updateProductPhoto(id, file));
     }
 
@@ -76,7 +77,7 @@ public class ProductController {
 
     @GetMapping(value = "/{id}/photo", produces = MediaType.IMAGE_JPEG_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<byte[]> getProductPhoto(@PathVariable("id") UUID id) {
+    public ResponseEntity<byte[]> getProductPhoto(@PathVariable("id") UUID id) throws IOException {
         return ResponseEntity.ok(productService.getProductPhoto(id));
     }
 

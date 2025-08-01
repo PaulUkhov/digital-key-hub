@@ -1,8 +1,6 @@
 package com.audio.dto;
 
-import com.audio.entity.OrderItemEntity;
-import com.audio.entity.OrderStatus;
-import jakarta.persistence.*;
+import com.audio.enums.OrderStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
