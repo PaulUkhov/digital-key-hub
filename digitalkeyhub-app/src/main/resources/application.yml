@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local  # Профиль по умолчанию
+    active: local
   config:
     import:
       - classpath:application-${spring.profiles.active}.yml
@@ -8,3 +8,9 @@ spring:
       - classpath:application-user-${spring.profiles.active}.yml
       - classpath:application-storage.yml
       - classpath:application-storage-${spring.profiles.active}.yml
+      - classpath:application-product.yml
+      - classpath:application-product-${spring.profiles.active}.yml
+      - classpath:application-order.yml
+      - classpath:application-order-${spring.profiles.active}.yml
+      - classpath:application-payment.yml
+      - classpath:application-payment-${spring.profiles.active}.yml

@@ -9,6 +9,11 @@
       </persistence-unit>
       <persistence-unit moduleName="digitalkeyhub-api" name="Default" />
       <persistence-unit moduleName="digitalkeyhub-user" name="Default" />
+      <persistence-unit moduleName="digitalkeyhub-storage" name="Default" />
+      <persistence-unit moduleName="digitalkeyhub-security" name="Default" />
+      <persistence-unit moduleName="digitalkeyhub-product" name="Default" />
+      <persistence-unit moduleName="digitalkeyhub-order" name="Default" />
+      <persistence-unit moduleName="digitalkeyhub-payment" name="Default" />
     </persistence-units>
   </component>
 </project>
