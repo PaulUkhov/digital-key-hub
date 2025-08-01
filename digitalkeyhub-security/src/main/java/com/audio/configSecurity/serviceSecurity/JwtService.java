@@ -1,4 +1,4 @@
-package serviceSecurity;
+package com.audio.configSecurity.serviceSecurity;
 
 import com.audio.entity.UserEntity;
 import io.jsonwebtoken.Claims;

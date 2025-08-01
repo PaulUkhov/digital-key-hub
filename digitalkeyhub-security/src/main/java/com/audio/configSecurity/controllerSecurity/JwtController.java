@@ -1,16 +1,15 @@
-package controllerSecurity;
+package com.audio.configSecurity.controllerSecurity;
 
-import com.audio.entity.UserEntity;
 import com.audio.repository.UserRepository;
-import dtoSecurity.AuthResponse;
-import dtoSecurity.LoginRequest;
-import dtoSecurity.RegisterRequest;
-import esceptionSecurity.AuthException;
+import com.audio.configSecurity.dtoSecurity.AuthResponse;
+import com.audio.configSecurity.dtoSecurity.LoginRequest;
+import com.audio.configSecurity.dtoSecurity.RegisterRequest;
+import com.audio.configSecurity.esceptionSecurity.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import serviceSecurity.AuthService;
+import com.audio.configSecurity.serviceSecurity.AuthService;
 
 
 @RequiredArgsConstructor
@@ -18,7 +17,6 @@ import serviceSecurity.AuthService;
 @RequestMapping("/api/auth")
 public class JwtController {
     private final AuthService authService;
-    private final UserEntity userEntity;
     private final UserRepository userRepository;
 
     @PostMapping("/register")
