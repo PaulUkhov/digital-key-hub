@@ -18,6 +18,7 @@
         <module>digitalkeyhub-comment</module>
         <module>digitalkeyhub-product</module>
         <module>digitalkeyhub-storage</module>
+        <module>digitalkeyhub-order</module>
     </modules>
 
     <properties>
