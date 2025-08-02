@@ -13,11 +13,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 
 @Service
-public class StorageService implements FileStorageService {
+public class MinioStorageService implements FileStorageService {
     private final MinioClient minioClient;
     private final String bucketName;
 
-    public StorageService(
+    public MinioStorageService(
             @Value("${minio.endpoint}") String endpoint,
             @Value("${minio.access-key}") String accessKey,
             @Value("${minio.secret-key}") String secretKey,
