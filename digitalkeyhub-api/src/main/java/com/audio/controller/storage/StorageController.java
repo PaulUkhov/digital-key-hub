@@ -1,6 +1,6 @@
 package com.audio.controller.storage;
 
-import com.audio.service.StorageService;
+import com.audio.service.MinioStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -16,7 +16,7 @@ import java.io.InputStream;
 @RequestMapping("/api/v1/storage")
 @RequiredArgsConstructor
 public class StorageController {
-    private final StorageService storageService;
+    private final MinioStorageService storageService;
 
     @GetMapping("/avatar/{objectName}")
     public ResponseEntity<InputStreamResource> getAvatar(@PathVariable("objectName") String objectName) {
