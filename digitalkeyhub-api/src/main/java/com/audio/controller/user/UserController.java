@@ -1,4 +1,4 @@
-package com.audio;
+package com.audio.controller.user;
 
 import com.audio.dto.ProfileDto;
 import com.audio.dto.ProfileResponseDto;

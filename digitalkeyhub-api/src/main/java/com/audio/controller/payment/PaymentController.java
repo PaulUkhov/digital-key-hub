@@ -1,4 +1,4 @@
-package com.audio.controller;
+package com.audio.controller.payment;
 
 import com.audio.dto.PaymentRequest;
 import com.audio.dto.PaymentResponse;

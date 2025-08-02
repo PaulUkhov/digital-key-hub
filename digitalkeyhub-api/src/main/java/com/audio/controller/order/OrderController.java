@@ -1,8 +1,8 @@
-package com.audio.controller;
+package com.audio.controller.order;
 
 import com.audio.dto.OrderCreateDto;
 import com.audio.dto.OrderDto;
-import com.audio.service.OrderService;
+import com.audio.service.OrderServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
 public class OrderController {
-    private final OrderService orderService;
+    private final OrderServiceImpl orderService;
 
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(

@@ -122,7 +122,7 @@ public class PaymentService {
         return PaymentIntent.retrieve(paymentIntentId);
     }
 
-    private void completePayment(PaymentIntent paymentIntent) {
+    void completePayment(PaymentIntent paymentIntent) {
         String stripePaymentId = paymentIntent.getId();
         log.info("Completing payment: {}", stripePaymentId);
 

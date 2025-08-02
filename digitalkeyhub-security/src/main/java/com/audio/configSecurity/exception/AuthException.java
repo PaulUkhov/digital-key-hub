@@ -1,4 +1,4 @@
-package com.audio.configSecurity.esceptionSecurity;
+package com.audio.configSecurity.exception;
 
 public class AuthException extends RuntimeException {
     public AuthException(String message) {

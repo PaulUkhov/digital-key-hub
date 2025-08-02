@@ -35,7 +35,7 @@ class OrderServiceTest {
     private OrderMapper orderMapper;
 
     @InjectMocks
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
 
     private final UUID testUserId = UUID.randomUUID();
     private final UUID testProductId = UUID.randomUUID();
