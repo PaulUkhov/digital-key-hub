@@ -1,4 +1,4 @@
-package com.audio.configSecurity.dtoSecurity;
+package com.audio.configSecurity.dto;
 
 
 public record AuthResponse (String access, String refresh) {}

@@ -1,4 +1,4 @@
-package com.audio.controller;
+package com.audio.controller.product;
 
 import com.audio.dto.*;
 import com.audio.service.ProductService;
