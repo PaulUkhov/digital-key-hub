@@ -1,0 +1,6 @@
+app:
+  security:
+    jwt:
+      secret-key: your-256-bit-secret-key-here-must-be-at-least-32-chars
+      access-expiration: 86400000 # 24 hours in milliseconds
+      refresh-expiration: 604800000 # 7 days in milliseconds

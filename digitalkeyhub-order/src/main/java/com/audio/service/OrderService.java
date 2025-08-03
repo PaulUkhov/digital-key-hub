@@ -1,145 +1,43 @@
 package com.audio.service;
 
+
 import com.audio.dto.*;
 import com.audio.entity.*;
-import com.audio.enums.OrderStatus;
-import com.audio.exception.*;
-import com.audio.mapper.OrderMapper;
-import com.audio.repository.OrderRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-@Service
-@RequiredArgsConstructor
-public class OrderService {
-    private final OrderRepository orderRepository;
-    private final ProductService productService;
-    private final OrderMapper orderMapper;
 
 
-    @Transactional
-    public OrderDto createOrder(OrderCreateDto orderCreateDto, UUID userId) {
-        List<OrderItemEntity> orderItems = validateAndCreateItems(orderCreateDto.getItems());
+public interface OrderService {
 
-        BigDecimal totalAmount = calculateTotalAmount(orderItems);
 
-        OrderEntity order = OrderEntity.builder()
-                .userId(userId)
-                .items(orderItems)
-                .status(OrderStatus.CREATED)
-                .totalAmount(totalAmount)
-                .build();
+    OrderDto createOrder(OrderCreateDto orderCreateDto, UUID userId);
 
-        orderItems.forEach(item -> item.setOrder(order));
 
-        OrderEntity savedOrder = orderRepository.save(order);
+    OrderDto getOrder(UUID orderId, UUID userId);
 
-        updateProductStocks(orderItems, false);
 
-        return orderMapper.toOrderDto(savedOrder);
-    }
+    List<OrderDto> getUserOrders(UUID userId);
 
-    @Transactional(readOnly = true)
-    public OrderDto getOrder(UUID orderId, UUID userId) {
-        OrderEntity order = orderRepository.findByIdAndUserId(orderId, userId)
-                .orElseThrow(() -> new OrderNotFoundException(orderId));
-        return orderMapper.toOrderDto(order);
-    }
 
-    @Transactional(readOnly = true)
-    public List<OrderDto> getUserOrders(UUID userId) {
-        return orderRepository.findByUserId(userId).stream()
-                .map(orderMapper::toOrderDto)
-                .collect(Collectors.toList());
-    }
+    void cancelOrder(UUID orderId, UUID userId);
 
-    @Transactional
-    public void cancelOrder(UUID orderId, UUID userId) {
-        OrderEntity order = orderRepository.findByIdAndUserId(orderId, userId)
-                .orElseThrow(() -> new OrderNotFoundException(orderId));
+    List<OrderItemEntity> validateAndCreateItems(List<OrderItemDto> items);
 
-        if (order.getStatus() != OrderStatus.CREATED) {
-            throw new OrderOperationException("Cannot cancel order in status: " + order.getStatus());
-        }
+    OrderItemEntity createOrderItem(OrderItemDto itemDto);
 
-        order.setStatus(OrderStatus.CANCELLED);
-        orderRepository.save(order);
+    BigDecimal calculateTotalAmount(List<OrderItemEntity> items);
 
-        updateProductStocks(order.getItems(), true);
-    }
+    void updateProductStocks(List<OrderItemEntity> items, boolean isRestock);
 
-    private List<OrderItemEntity> validateAndCreateItems(List<OrderItemDto> items) {
-        if (items == null || items.isEmpty()) {
-            throw new OrderOperationException("Order must contain at least one item");
-        }
 
-        return items.stream()
-                .map(this::createOrderItem)
-                .collect(Collectors.toList());
-    }
+    OrderDto completeOrder(UUID orderId);
 
-    private OrderItemEntity createOrderItem(OrderItemDto itemDto) {
 
-        ProductResponseDto product = productService.getProductById(itemDto.getProductId());
+    void failOrder(UUID orderId, String reason);
 
-        if (product.stockQuantity() < itemDto.getQuantity()) {
-            throw new InsufficientStockException(
-                    "Not enough stock for product: " + product.id() +
-                            ". Available: " + product.stockQuantity() +
-                            ", requested: " + itemDto.getQuantity());
-        }
+    OrderEntity getOrderEntity(UUID orderId);
 
-        BigDecimal subtotal = product.price().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
-
-        return OrderItemEntity.builder()
-                .productId(product.id())
-                .quantity(itemDto.getQuantity())
-                .unitPrice(product.price())
-                .subtotal(subtotal)
-                .build();
-    }
-
-    BigDecimal calculateTotalAmount(List<OrderItemEntity> items) {
-        return items.stream()
-                .map(OrderItemEntity::getSubtotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private void updateProductStocks(List<OrderItemEntity> items, boolean isRestock) {
-        items.forEach(item -> {
-            int quantityChange = isRestock ? item.getQuantity() : -item.getQuantity();
-            productService.updateStockQuantity(item.getProductId(), quantityChange);
-        });
-    }
-
-    @Transactional
-    public void completeOrder(UUID orderId) {
-        OrderEntity order = getOrderEntity(orderId);
-        order.setStatus(OrderStatus.PAID);
-        orderRepository.save(order);
-    }
-
-    @Transactional
-    public void failOrder(UUID orderId, String reason) {
-        OrderEntity order = getOrderEntity(orderId);
-        order.setStatus(OrderStatus.CANCELLED);
-        orderRepository.save(order);
-        updateProductStocks(order.getItems(), true);
-    }
-
-    public OrderEntity getOrderEntity(UUID orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException(orderId));
-    }
-
-    public OrderEntity getOrderEntity(UUID orderId, UUID userId) {
-        return orderRepository.findByIdAndUserId(orderId, userId)
-                .orElseThrow(() -> new OrderNotFoundException(orderId));
-    }
+    OrderEntity getOrderEntity(UUID orderId, UUID userId);
 }

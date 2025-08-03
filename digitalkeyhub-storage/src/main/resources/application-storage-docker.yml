@@ -1,5 +1,5 @@
 minio:
-  endpoint: http://minio:9000  # Имя сервиса из docker-compose
+  endpoint: http://minio:9000
   access-key: minioadmin
   secret-key: minioadmin
   bucket-name: user-avatars
