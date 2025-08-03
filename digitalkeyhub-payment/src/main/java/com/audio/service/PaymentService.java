@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -32,6 +34,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final StripeClient stripeClient;
     private final OrderService orderService;
+    private final EmailService emailService;
 
     @Value("${stripe.webhook-secret}")
     private String webhookSecret;
@@ -151,6 +154,23 @@ public class PaymentService {
         if (payment.getOrderId() != null) {
             orderService.completeOrder(payment.getOrderId());
         }
+
+//        Map<String, Object> emailData = new HashMap<>();
+//        emailData.put("orderId", order.getId());
+//        emailData.put("paymentDate", LocalDateTime.now());
+//        emailData.put("paymentMethod", "Credit Card");
+//        emailData.put("productName", "Premium License Key");
+//        emailData.put("amount", 49.99);
+//        emailData.put("digitalContent", "License Key: ABCD-1234-EFGH-5678");
+//        emailData.put("downloadLink", "https://yourdomain.com/download/123");
+//        emailData.put("supportEmail", "support@yourdomain.com");
+//        emailData.put("baseUrl", "https://yourdomain.com");
+//
+//        emailService.sendPaymentReceipt(
+//                customerEmail,
+//                "Your Payment Receipt - Order #123",
+//                emailData
+//        );
     }
 
     private void failPayment(String stripePaymentId, String errorMessage) {
