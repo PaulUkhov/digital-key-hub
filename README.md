@@ -20,18 +20,50 @@ A comprehensive digital marketplace platform with payment processing, user manag
 - **Containerization**: Docker
 - **CI/CD**: GitHub Actions
 
-## 🏗 Architecture
+## 🏗 Architecture Modules
 
-```mermaid
-graph TD
-    A[User Service] --> B[Payment Service]
-    A --> C[Order Service]
-    A --> D[Product Service]
-    B --> E[Stripe API]
-    C --> B
-    C --> F[Notification Service]
-    D --> G[MinIO Storage]
-```
+The DigitalKeyHub platform consists of these core microservices:
+
+### Core Services
+- **User Service**  
+  Handles user authentication, profiles, and permissions
+
+- **Payment Service**  
+  Processes transactions via Stripe integration  
+  Features:  
+  ✓ Payment intent creation  
+  ✓ Webhook handling  
+  ✓ Transaction records
+
+- **Order Service**  
+  Manages complete order lifecycle:  
+  ✓ Order creation  
+  ✓ Status tracking  
+  ✓ Inventory updates
+
+- **Product Service**  
+  Maintains product catalog with:  
+  ✓ SKU management  
+  ✓ Pricing  
+  ✓ Digital asset storage
+
+### Infrastructure Components
+- **Notification Service**  
+  Handles real-time:  
+  ✓ Email alerts  
+  ✓ Payment confirmations  
+  ✓ Order updates
+
+- **Storage Service**  
+  MinIO-based solution for:  
+  ✓ Product assets  
+  ✓ User uploads  
+  ✓ Metadata storage
+
+### External Integrations
+- **Stripe API** - Payment processing
+- **PostgreSQL** - Primary data storage
+- **MinIO** - Object storage backend
 
 🚀 Getting Started
 Prerequisites
