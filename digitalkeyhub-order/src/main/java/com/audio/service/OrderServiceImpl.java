@@ -119,10 +119,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    public void completeOrder(UUID orderId) {
+    public OrderDto completeOrder(UUID orderId) {
         OrderEntity order = getOrderEntity(orderId);
         order.setStatus(OrderStatus.PAID);
-        orderRepository.save(order);
+        return orderMapper.toOrderDto(orderRepository.save(order));
     }
 
     @Transactional

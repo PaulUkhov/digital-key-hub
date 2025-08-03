@@ -172,4 +172,20 @@ public class ProductServiceImpl implements ProductService {
         int lastDot = filename.lastIndexOf('.');
         return lastDot == -1 ? "jpg" : filename.substring(lastDot + 1);
     }
+
+    @Transactional(readOnly = true)
+    public ProductResponseDtoPaid getProductForPaid(UUID id) {
+        var product = productRepository.findById(id);
+        return ProductResponseDtoPaid.builder()
+                .id(product.get().getId())
+                .name(product.get().getName())
+                .price(product.get().getPrice())
+                .photoUrl(product.get().getPhotoUrl())
+                .stockQuantity(product.get().getStockQuantity())
+                .isActive(product.get().getIsActive())
+                .sku(product.get().getSku())
+                .description(product.get().getDescription())
+                .digitalContent(product.get().getDigitalContent())
+                .build();
+    }
 }

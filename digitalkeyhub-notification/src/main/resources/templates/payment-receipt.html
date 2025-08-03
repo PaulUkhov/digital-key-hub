@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Digital Key</title>
+    <style>
+        .key {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            display: inline-block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Your Order #<span th:text="${orderId}"></span></h1>
+
+<p>Amount: $<span th:text="${#numbers.formatDecimal(amount, 1, 2)}"></span></p>
+
+<h2>Digital Content</h2>
+<div class="key" th:text="${digitalKey}"></div>
+
+<div th:if="${downloadLink}">
+    <a th:href="${downloadLink}" target="_blank">Download your content</a>
+</div>
+</body>
+</html>
