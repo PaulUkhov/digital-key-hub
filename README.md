@@ -1,7 +1,5 @@
 # DigitalKeyHub Platform
 
-![DigitalKeyHub Logo](https://via.placeholder.com/150x50?text=DigitalKeyHub) <!-- Replace with your actual logo -->
-
 A comprehensive digital marketplace platform with payment processing, user management, and product storage capabilities.
 
 ## 🚀 Features
