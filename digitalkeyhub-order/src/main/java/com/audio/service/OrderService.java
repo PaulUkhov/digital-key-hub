@@ -32,7 +32,7 @@ public interface OrderService {
     void updateProductStocks(List<OrderItemEntity> items, boolean isRestock);
 
 
-    void completeOrder(UUID orderId);
+    OrderDto completeOrder(UUID orderId);
 
 
     void failOrder(UUID orderId, String reason);

@@ -36,6 +36,8 @@ public class ProductEntity {
 
     private String photoUrl;
 
+    private String digitalContent;
+
     @Column(nullable = false)
     private Boolean isActive = true;
 

@@ -23,4 +23,6 @@ public interface ProductService {
     void deleteProduct(UUID id);
     ProductResponseDto setProductActiveStatus(UUID id, boolean isActive);
     ProductResponseDto updateStockQuantity(UUID id, int quantityChange);
+
+    ProductResponseDtoPaid getProductForPaid(UUID productId);
 }
