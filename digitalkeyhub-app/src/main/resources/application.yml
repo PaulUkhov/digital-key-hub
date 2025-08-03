@@ -15,3 +15,4 @@ spring:
       - classpath:application-payment.yml
       - classpath:application-payment-${spring.profiles.active}.yml
       - classpath:application-security.yml
+      - classpath:application-notification.properties
