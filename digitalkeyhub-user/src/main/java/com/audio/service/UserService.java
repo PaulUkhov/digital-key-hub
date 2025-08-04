@@ -11,6 +11,8 @@ import com.audio.mapper.UserMapper;
 import com.audio.repository.ProfileRepository;
 import com.audio.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,18 +91,19 @@ public class UserService {
         return filename.substring(lastDot + 1);
     }
 
+    @Cacheable(value = "users", key = "#id")
     @Transactional(readOnly = true)
     public Optional<UserResponseDto> findById(UUID id) {
         return userRepo.findById(id)
                 .map(userMapper::toUserResponseDto);
     }
 
+    @Cacheable(value = "users", key = "#id")
     @Transactional(readOnly = true)
     public Optional<UserResponseDto> findByEmail(String email) {
         return userRepo.findByEmail(email)
                 .map(userMapper::toUserResponseDto);
     }
-
 
     public boolean existsById(UUID userId) {
         return userRepo.existsById(userId);
