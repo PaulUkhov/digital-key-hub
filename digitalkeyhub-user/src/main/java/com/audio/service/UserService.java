@@ -105,6 +105,11 @@ public class UserService {
                 .map(userMapper::toUserResponseDto);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
+    public void deleteUser(UUID userId) {
+        userRepo.deleteById(userId);
+    }
+
     public boolean existsById(UUID userId) {
         return userRepo.existsById(userId);
     }
