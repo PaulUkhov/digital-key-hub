@@ -2,6 +2,7 @@ package com.audio.controller.product;
 
 import com.audio.dto.*;
 import com.audio.service.ProductService;
+import com.audio.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class ProductController {
 
     private final ProductService productService;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductCreateDto createDto) {
@@ -100,4 +102,5 @@ public class ProductController {
             @RequestParam(name = "quantity") int quantity) {
         return ResponseEntity.ok(productService.updateStockQuantity(id, quantity));
     }
+
 }

@@ -25,4 +25,6 @@ public interface ProductService {
     ProductResponseDto updateStockQuantity(UUID id, int quantityChange);
 
     ProductResponseDtoPaid getProductForPaid(UUID productId);
+    ProductDetailsDto getProductDetailsById(UUID productId, UUID currentUserId);
+    CommentDto addCommentToProduct(UUID productId, UUID userId, String content);
 }

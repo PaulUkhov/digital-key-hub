@@ -27,6 +27,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final FileStorageService storageService;
 
+
     @Transactional
     public UserResponseDto createUser(RegisterDto dto) {
         UserEntity user = new UserEntity();
@@ -98,5 +99,10 @@ public class UserService {
     public Optional<UserResponseDto> findByEmail(String email) {
         return userRepo.findByEmail(email)
                 .map(userMapper::toUserResponseDto);
+    }
+
+
+    public boolean existsById(UUID userId) {
+        return userRepo.existsById(userId);
     }
 }
