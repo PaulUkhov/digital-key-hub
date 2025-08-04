@@ -3,6 +3,7 @@ package com.audio.service;
 import com.audio.dto.*;
 import com.audio.entity.ProductEntity;
 import com.audio.exception.ProductNotFoundException;
+import com.audio.like.service.LikeService;
 import com.audio.mapper.ProductMapper;
 import com.audio.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,6 +25,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final FileStorageService storageService;
+    private final CommentService commentService;
+    private final LikeService likeService;
 
     @Transactional
     public ProductResponseDto createProduct(ProductCreateDto createDto) {
@@ -187,5 +191,45 @@ public class ProductServiceImpl implements ProductService {
                 .description(product.get().getDescription())
                 .digitalContent(product.get().getDigitalContent())
                 .build();
+    }
+
+    @Override
+    public ProductDetailsDto getProductDetailsById(UUID productId, UUID currentUserId) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        long likesCount = likeService.getLikesCount(productId, "PRODUCT");
+        boolean likedByCurrentUser = currentUserId != null &&
+                likeService.checkIfLiked(productId, "PRODUCT", currentUserId);
+
+        List<CommentDto> recentComments = commentService.getCommentsForEntity(productId, "PRODUCT")
+                .stream()
+                .limit(5)
+                .toList();
+
+        return new ProductDetailsDto(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getStockQuantity(),
+                product.getSku(),
+                product.getPhotoUrl(),
+                product.getIsActive(),
+                product.getCreatedAt(),
+                product.getUpdatedAt(),
+                likesCount,
+                likedByCurrentUser,
+                recentComments
+        );
+    }
+
+    @Override
+    public CommentDto addCommentToProduct(UUID productId, UUID userId, String content) {
+        if (!productRepository.existsById(productId)) {
+            throw new ProductNotFoundException(productId);
+        }
+
+        return commentService.addComment(productId, "PRODUCT", userId, content);
     }
 }
