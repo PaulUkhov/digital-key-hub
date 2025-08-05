@@ -8,11 +8,16 @@ services:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SPRING_APPLICATION_NAME: digitalkeyhub-common-config
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
     depends_on:
       postgres:
         condition: service_healthy
       minio:
         condition: service_started
+      redis:
+        condition: service_healthy
     networks:
       - app_network
     healthcheck:
@@ -60,9 +65,25 @@ services:
       timeout: 20s
       retries: 3
 
+  redis:
+    image: redis:6-alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
   minio_data:
+  redis_data:
 
 networks:
   app_network:

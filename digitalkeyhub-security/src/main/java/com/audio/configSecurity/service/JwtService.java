@@ -1,6 +1,5 @@
 package com.audio.configSecurity.service;
 
-import com.audio.configSecurity.user.SecurityUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
