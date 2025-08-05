@@ -1,5 +1,6 @@
 package com.audio.service;
 
+
 import com.audio.dto.CommentDto;
 import com.audio.dto.UserDto;
 import com.audio.dto.UserResponseDto;
@@ -8,6 +9,8 @@ import com.audio.exception.AccessDeniedException;
 import com.audio.repository.CommentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserService userService;
 
+    @Cacheable(value = "commentsByEntity", key = "#entityType + '_' + #entityId")
     public List<CommentDto> getCommentsForEntity(UUID entityId, String entityType) {
         return commentRepository.findByEntityIdAndEntityTypeOrderByCreatedAtDesc(entityId, entityType)
                 .stream()
@@ -39,6 +43,7 @@ public class CommentService {
         return mapToDto(commentRepository.save(comment));
     }
 
+    @CacheEvict(value = "commentDeleteId", key =  "#commentId")
     public void deleteComment(UUID commentId, UUID userId) {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
@@ -52,7 +57,7 @@ public class CommentService {
 
     private CommentDto mapToDto(CommentEntity entity) {
         UserResponseDto user = userService.findById(entity.getUserId())
-                .orElseThrow(()-> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return CommentDto.builder()
                 .id(entity.getId())

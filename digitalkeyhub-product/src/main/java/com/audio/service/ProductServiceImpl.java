@@ -1,5 +1,6 @@
 package com.audio.service;
 
+
 import com.audio.dto.*;
 import com.audio.entity.ProductEntity;
 import com.audio.exception.ProductNotFoundException;
@@ -7,6 +8,9 @@ import com.audio.like.service.LikeService;
 import com.audio.mapper.ProductMapper;
 import com.audio.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +39,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponseDto(savedProduct);
     }
 
+    @Cacheable(value = "getProductById", key = "#id")
     @Transactional(readOnly = true)
     public ProductResponseDto getProductById(UUID id) {
         ProductEntity product = productRepository.findById(id)
@@ -42,12 +47,14 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponseDto(product);
     }
 
+    @Cacheable(value = "getAllProducts")
     @Transactional(readOnly = true)
     public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable)
                 .map(productMapper::toResponseDto);
     }
 
+    @Cacheable(value = "productsByFilters",key = "#name + ' ' + #minPrice + ' ' + #maxPrice + ' ' + #isActive + ' ' + #pageable.pageNumber + ' ' + #pageable.pageSize + ' ' + #pageable.sort.toString()")
     @Transactional(readOnly = true)
     public Page<ProductResponseDto> searchProducts(
             String name,
@@ -63,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
                 pageable
         ).map(productMapper::toResponseDto);
     }
-
+    @CachePut(value = "productCache", key = "#id")
     @Transactional
     public ProductResponseDto updateProduct(UUID id, ProductUpdateDto updateDto) {
         ProductEntity product = productRepository.findById(id)
@@ -73,7 +80,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity updatedProduct = productRepository.save(product);
         return productMapper.toResponseDto(updatedProduct);
     }
-
+    @Cacheable(value = "productCachePhoto",key ="#id + #image" )
     @Transactional
     public ProductResponseDto updateProductPhoto(UUID id, MultipartFile image) {
         ProductEntity product = productRepository.findById(id)
@@ -95,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Failed to update product photo", e);
         }
     }
-
+@CacheEvict(value = "deletePhotoById",key = "#id")
     @Transactional
     public ProductResponseDto deleteProductPhoto(UUID id) {
         ProductEntity product = productRepository.findById(id)
@@ -113,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
         }
         return productMapper.toResponseDto(product);
     }
-
+@Cacheable(value = "productCachePhoto",key = "#id")
     @Transactional(readOnly = true)
     public byte[] getProductPhoto(UUID id) {
         ProductEntity product = productRepository.findById(id)
@@ -129,7 +136,7 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Failed to get product photo", e);
         }
     }
-
+@CacheEvict(value = "deleteProductByID",key = "#id")
     @Transactional
     public void deleteProduct(UUID id) {
         ProductEntity product = productRepository.findById(id)

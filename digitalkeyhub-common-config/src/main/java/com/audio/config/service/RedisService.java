@@ -1,11 +1,10 @@
-package com.audio.service;
+package com.audio.config.service;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RedisService {
-
     private final RedisTemplate<String, Object> redisTemplate;
 
     public RedisService(RedisTemplate<String, Object> redisTemplate) {
@@ -24,3 +23,4 @@ public class RedisService {
         redisTemplate.delete(key);
     }
 }
+
