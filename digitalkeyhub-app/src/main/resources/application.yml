@@ -16,3 +16,5 @@ spring:
       - classpath:application-payment-${spring.profiles.active}.yml
       - classpath:application-security.yml
       - classpath:application-notification.properties
+      - classpath:application-redis.properties
+      - classpath:application-redis-${spring.profiles.active}.properties
