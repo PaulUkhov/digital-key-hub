@@ -17,6 +17,8 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+
+
     public void sendPaymentReceipt(String to, String subject,
                                    Map<String, Object> templateData) {
         try {

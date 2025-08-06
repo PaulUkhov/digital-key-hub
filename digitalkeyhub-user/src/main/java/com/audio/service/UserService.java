@@ -29,7 +29,6 @@ public class UserService {
     private final UserMapper userMapper;
     private final FileStorageService storageService;
 
-
     @Transactional
     public UserResponseDto createUser(RegisterDto dto) {
         UserEntity user = new UserEntity();
