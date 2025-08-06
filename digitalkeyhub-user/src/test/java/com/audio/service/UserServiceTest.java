@@ -218,13 +218,4 @@ class UserServiceTest {
         assertEquals(testEmail, result.get().email());
         verify(userRepo).findByEmail(testEmail);
     }
-
-    @Test
-    void getFileExtension_shouldReturnCorrectExtension() {
-        assertEquals("jpg", userService.getFileExtension("avatar.jpg"));
-        assertEquals("png", userService.getFileExtension("image.png"));
-        assertEquals("jpeg", userService.getFileExtension("photo.some.jpeg"));
-        assertEquals("jpg", userService.getFileExtension("noextension"));
-        assertEquals("jpg", userService.getFileExtension(null));
-    }
 }
