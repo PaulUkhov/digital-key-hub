@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
                 .map(productMapper::toResponseDto);
     }
 
-    @Cacheable(value = "productsByFilters",key = "#name + ' ' + #minPrice + ' ' + #maxPrice + ' ' + #isActive + ' ' + #pageable.pageNumber + ' ' + #pageable.pageSize + ' ' + #pageable.sort.toString()")
+    @Cacheable(value = "productsByFilters", key = "#name + ' ' + #minPrice + ' ' + #maxPrice + ' ' + #isActive + ' ' + #pageable.pageNumber + ' ' + #pageable.pageSize + ' ' + #pageable.sort.toString()")
     @Transactional(readOnly = true)
     public Page<ProductResponseDto> searchProducts(
             String name,
@@ -69,6 +69,7 @@ public class ProductServiceImpl implements ProductService {
                 pageable
         ).map(productMapper::toResponseDto);
     }
+
     @CachePut(value = "productCache", key = "#id")
     @Transactional
     public ProductResponseDto updateProduct(UUID id, ProductUpdateDto updateDto) {
@@ -79,7 +80,8 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity updatedProduct = productRepository.save(product);
         return productMapper.toResponseDto(updatedProduct);
     }
-    @Cacheable(value = "productCachePhoto",key ="#id + #image" )
+
+    @Cacheable(value = "productCachePhoto", key = "#id + #image")
     @Transactional
     public ProductResponseDto updateProductPhoto(UUID id, MultipartFile image) {
         ProductEntity product = productRepository.findById(id)
@@ -101,7 +103,8 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Failed to update product photo", e);
         }
     }
-@CacheEvict(value = "deletePhotoById",key = "#id")
+
+    @CacheEvict(value = "deletePhotoById", key = "#id")
     @Transactional
     public ProductResponseDto deleteProductPhoto(UUID id) {
         ProductEntity product = productRepository.findById(id)
@@ -119,7 +122,8 @@ public class ProductServiceImpl implements ProductService {
         }
         return productMapper.toResponseDto(product);
     }
-@Cacheable(value = "productCachePhoto",key = "#id")
+
+    @Cacheable(value = "productCachePhoto", key = "#id")
     @Transactional(readOnly = true)
     public byte[] getProductPhoto(UUID id) {
         ProductEntity product = productRepository.findById(id)
@@ -135,7 +139,8 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Failed to get product photo", e);
         }
     }
-@CacheEvict(value = "deleteProductByID",key = "#id")
+
+    @CacheEvict(value = "deleteProductByID", key = "#id")
     @Transactional
     public void deleteProduct(UUID id) {
         ProductEntity product = productRepository.findById(id)
