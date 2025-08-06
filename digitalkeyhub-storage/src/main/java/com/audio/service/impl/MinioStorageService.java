@@ -1,5 +1,6 @@
-package com.audio.service;
+package com.audio.service.impl;
 
+import com.audio.service.FileStorageService;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;

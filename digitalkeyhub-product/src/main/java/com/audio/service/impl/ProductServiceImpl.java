@@ -1,4 +1,4 @@
-package com.audio.service;
+package com.audio.service.impl;
 
 import com.audio.dto.*;
 import com.audio.entity.ProductEntity;
@@ -6,6 +6,9 @@ import com.audio.exception.ProductNotFoundException;
 import com.audio.like.service.LikeService;
 import com.audio.mapper.ProductMapper;
 import com.audio.repository.ProductRepository;
+import com.audio.service.CommentService;
+import com.audio.service.FileStorageService;
+import com.audio.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;

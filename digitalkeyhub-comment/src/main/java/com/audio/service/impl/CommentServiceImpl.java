@@ -1,4 +1,4 @@
-package com.audio.service;
+package com.audio.service.impl;
 
 
 import com.audio.dto.CommentDto;
@@ -7,6 +7,8 @@ import com.audio.dto.UserResponseDto;
 import com.audio.entity.CommentEntity;
 import com.audio.exception.AccessDeniedException;
 import com.audio.repository.CommentRepository;
+import com.audio.service.CommentService;
+import com.audio.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
