@@ -1,6 +1,9 @@
 package com.audio.service.impl;
 
-import com.audio.dto.*;
+import com.audio.dto.request.OrderCreateServiceRequest;
+import com.audio.dto.response.OrderItemServiceResponse;
+import com.audio.dto.response.OrderServiceResponse;
+import com.audio.dto.response.ProductServiceResponse;
 import com.audio.entity.*;
 import com.audio.enums.OrderStatus;
 import com.audio.exception.*;
@@ -26,7 +29,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Transactional
-    public OrderDto createOrder(OrderCreateDto orderCreateDto, UUID userId) {
+    public OrderServiceResponse createOrder(OrderCreateServiceRequest orderCreateDto, UUID userId) {
         List<OrderItemEntity> orderItems = validateAndCreateItems(orderCreateDto.getItems());
 
         BigDecimal totalAmount = calculateTotalAmount(orderItems);
@@ -48,14 +51,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderDto getOrder(UUID orderId, UUID userId) {
+    public OrderServiceResponse getOrder(UUID orderId, UUID userId) {
         OrderEntity order = orderRepository.findByIdAndUserId(orderId, userId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
         return orderMapper.toOrderDto(order);
     }
 
     @Transactional(readOnly = true)
-    public List<OrderDto> getUserOrders(UUID userId) {
+    public List<OrderServiceResponse> getUserOrders(UUID userId) {
         return orderRepository.findByUserId(userId).stream()
                 .map(orderMapper::toOrderDto)
                 .collect(Collectors.toList());
@@ -76,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
         updateProductStocks(order.getItems(), true);
     }
 
-    public List<OrderItemEntity> validateAndCreateItems(List<OrderItemDto> items) {
+    public List<OrderItemEntity> validateAndCreateItems(List<OrderItemServiceResponse> items) {
         if (items == null || items.isEmpty()) {
             throw new OrderOperationException("Order must contain at least one item");
         }
@@ -86,9 +89,9 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-    public OrderItemEntity createOrderItem(OrderItemDto itemDto) {
+    public OrderItemEntity createOrderItem(OrderItemServiceResponse itemDto) {
 
-        ProductResponseDto product = productService.getProductById(itemDto.getProductId());
+        ProductServiceResponse product = productService.getProductById(itemDto.getProductId());
 
         if (product.stockQuantity() < itemDto.getQuantity()) {
             throw new InsufficientStockException(
@@ -121,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    public OrderDto completeOrder(UUID orderId) {
+    public OrderServiceResponse completeOrder(UUID orderId) {
         OrderEntity order = getOrderEntity(orderId);
         order.setStatus(OrderStatus.PAID);
         return orderMapper.toOrderDto(orderRepository.save(order));

@@ -1,6 +1,8 @@
 package com.audio.service;
 
-import com.audio.dto.*;
+import com.audio.dto.request.ProductServiceCreateRequest;
+import com.audio.dto.request.ProductServiceUpdateRequest;
+import com.audio.dto.response.ProductServiceResponse;
 import com.audio.entity.ProductEntity;
 import com.audio.exception.ProductNotFoundException;
 import com.audio.mapper.ProductMapper;
@@ -47,13 +49,13 @@ class ProductServiceTest {
 
     private final UUID productId = UUID.randomUUID();
     private final ProductEntity productEntity = new ProductEntity();
-    private final ProductResponseDto responseDto = new ProductResponseDto(
+    private final ProductServiceResponse responseDto = new ProductServiceResponse(
             productId, "Test", "Desc", BigDecimal.TEN, 5, "SKU123", null, true, null, null);
 
     @Test
     void createProduct_Success() {
         // Arrange
-        ProductCreateDto createDto = new ProductCreateDto(
+        ProductServiceCreateRequest createDto = new ProductServiceCreateRequest(
                 "Test", "Desc", BigDecimal.TEN, 5, "SKU123", true);
 
         when(productMapper.toEntity(createDto)).thenReturn(productEntity);
@@ -61,7 +63,7 @@ class ProductServiceTest {
         when(productMapper.toResponseDto(productEntity)).thenReturn(responseDto);
 
         // Act
-        ProductResponseDto result = productService.createProduct(createDto);
+        ProductServiceResponse result = productService.createProduct(createDto);
 
         // Assert
         assertNotNull(result);
@@ -76,7 +78,7 @@ class ProductServiceTest {
         when(productMapper.toResponseDto(productEntity)).thenReturn(responseDto);
 
         // Act
-        ProductResponseDto result = productService.getProductById(productId);
+        ProductServiceResponse result = productService.getProductById(productId);
 
         // Assert
         assertNotNull(result);
@@ -103,7 +105,7 @@ class ProductServiceTest {
         when(productMapper.toResponseDto(productEntity)).thenReturn(responseDto);
 
         // Act
-        Page<ProductResponseDto> result = productService.getAllProducts(pageable);
+        Page<ProductServiceResponse> result = productService.getAllProducts(pageable);
 
         // Assert
         assertEquals(1, result.getTotalElements());
@@ -113,7 +115,7 @@ class ProductServiceTest {
     @Test
     void updateProduct_Success() {
         // Arrange
-        ProductUpdateDto updateDto = new ProductUpdateDto(
+        ProductServiceUpdateRequest updateDto = new ProductServiceUpdateRequest(
                 "Updated", "New Desc", BigDecimal.valueOf(20), 10, "SKU456", false);
 
         when(productRepository.findById(productId)).thenReturn(Optional.of(productEntity));
@@ -121,7 +123,7 @@ class ProductServiceTest {
         when(productMapper.toResponseDto(productEntity)).thenReturn(responseDto);
 
         // Act
-        ProductResponseDto result = productService.updateProduct(productId, updateDto);
+        ProductServiceResponse result = productService.updateProduct(productId, updateDto);
 
         // Assert
         assertNotNull(result);
@@ -145,7 +147,7 @@ class ProductServiceTest {
         when(productMapper.toResponseDto(productEntity)).thenReturn(responseDto);
 
         // Act
-        ProductResponseDto result = productService.updateProductPhoto(productId, multipartFile);
+        ProductServiceResponse result = productService.updateProductPhoto(productId, multipartFile);
 
         // Assert
         assertNotNull(result);
@@ -163,7 +165,7 @@ class ProductServiceTest {
         when(productMapper.toResponseDto(productEntity)).thenReturn(responseDto);
 
         // Act
-        ProductResponseDto result = productService.deleteProductPhoto(productId);
+        ProductServiceResponse result = productService.deleteProductPhoto(productId);
 
         // Assert
         assertNull(result.photoUrl());
@@ -212,7 +214,7 @@ class ProductServiceTest {
         when(productMapper.toResponseDto(productEntity)).thenReturn(responseDto);
 
         // Act
-        ProductResponseDto result = productService.setProductActiveStatus(productId, false);
+        ProductServiceResponse result = productService.setProductActiveStatus(productId, false);
 
         // Assert
         assertNotNull(result);
@@ -229,7 +231,7 @@ class ProductServiceTest {
         when(productMapper.toResponseDto(productEntity)).thenReturn(responseDto);
 
         // Act
-        ProductResponseDto result = productService.updateStockQuantity(productId, 5);
+        ProductServiceResponse result = productService.updateStockQuantity(productId, 5);
 
         // Assert
         assertNotNull(result);

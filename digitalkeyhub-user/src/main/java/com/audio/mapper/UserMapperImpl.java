@@ -1,7 +1,7 @@
 package com.audio.mapper;
 
-import com.audio.dto.ProfileResponseDto;
-import com.audio.dto.UserResponseDto;
+import com.audio.dto.response.ProfileServiceResponse;
+import com.audio.dto.response.UserServiceResponse;
 import com.audio.entity.ProfileEntity;
 import com.audio.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 public class UserMapperImpl implements UserMapper {
 
     @Override
-    public UserResponseDto toUserResponseDto(UserEntity user) {
-        return new UserResponseDto(
+    public UserServiceResponse toUserResponseDto(UserEntity user) {
+        return new UserServiceResponse(
                 user.getId(),
                 user.getEmail(),
                 toProfileResponseDto(user.getProfile())
@@ -21,8 +21,8 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public ProfileResponseDto toProfileResponseDto(ProfileEntity profile) {
-        return new ProfileResponseDto(
+    public ProfileServiceResponse toProfileResponseDto(ProfileEntity profile) {
+        return new ProfileServiceResponse(
                 profile.getId(),
                 profile.getName(),
                 profile.getBio(),

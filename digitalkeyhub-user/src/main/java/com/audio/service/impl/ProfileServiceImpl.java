@@ -1,7 +1,7 @@
 package com.audio.service.impl;
 
-import com.audio.dto.ProfileDto;
-import com.audio.dto.ProfileResponseDto;
+import com.audio.dto.request.ProfileUpdateServiceRequest;
+import com.audio.dto.response.ProfileServiceResponse;
 import com.audio.entity.ProfileEntity;
 import com.audio.exception.ProfileNotFoundException;
 import com.audio.mapper.UserMapper;
@@ -25,7 +25,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public ProfileResponseDto updateProfile(UUID userId, ProfileDto dto) {
+    public ProfileServiceResponse updateProfile(UUID userId, ProfileUpdateServiceRequest dto) {
         ProfileEntity profile = profileRepo.findByUserId(userId)
                 .orElseThrow(() -> new ProfileNotFoundException(userId));
 
@@ -38,7 +38,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public ProfileResponseDto updateAvatar(UUID userId, MultipartFile image) {
+    public ProfileServiceResponse updateAvatar(UUID userId, MultipartFile image) {
         ProfileEntity profile = profileRepo.findByUserId(userId)
                 .orElseThrow(() -> new ProfileNotFoundException(userId));
 

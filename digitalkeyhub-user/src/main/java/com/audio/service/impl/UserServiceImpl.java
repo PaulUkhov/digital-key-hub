@@ -1,9 +1,6 @@
 package com.audio.service.impl;
 
-import com.audio.dto.RegisterDto;
-import com.audio.dto.UserResponseDto;
-import com.audio.entity.ProfileEntity;
-import com.audio.entity.UserEntity;
+import com.audio.dto.response.UserServiceResponse;
 import com.audio.mapper.UserMapper;
 import com.audio.repository.UserRepository;
 import com.audio.service.UserService;
@@ -24,24 +21,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    @Transactional
-    public UserResponseDto createUser(RegisterDto dto) {
-        UserEntity user = new UserEntity();
-        user.setEmail(dto.email());
-        user.setPassword(dto.password());
-
-        ProfileEntity profile = new ProfileEntity();
-        profile.setUser(user);
-        user.setProfile(profile);
-
-        UserEntity savedUser = userRepo.save(user);
-        return userMapper.toUserResponseDto(savedUser);
-    }
-
-    @Override
     @Cacheable(value = "users", key = "#id")
     @Transactional(readOnly = true)
-    public Optional<UserResponseDto> findById(UUID id) {
+    public Optional<UserServiceResponse> findById(UUID id) {
         return userRepo.findById(id)
                 .map(userMapper::toUserResponseDto);
     }
@@ -49,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable(value = "users", key = "#id")
     @Transactional(readOnly = true)
-    public Optional<UserResponseDto> findByEmail(String email) {
+    public Optional<UserServiceResponse> findByEmail(String email) {
         return userRepo.findByEmail(email)
                 .map(userMapper::toUserResponseDto);
     }
