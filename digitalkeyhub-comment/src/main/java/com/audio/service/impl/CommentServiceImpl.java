@@ -27,7 +27,6 @@ public class CommentServiceImpl implements CommentService {
     private final UserService userService;
 
     @Override
-    @Cacheable(value = "commentsByEntity", key = "#entityType + '_' + #entityId")
     public List<CommentServiceResponse> getCommentsForEntity(UUID entityId, String entityType) {
         return commentRepository.findByEntityIdAndEntityTypeOrderByCreatedAtDesc(entityId, entityType)
                 .stream()
@@ -48,7 +47,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @CacheEvict(value = "commentDeleteId", key =  "#commentId")
     public void deleteComment(UUID commentId, UUID userId) {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
