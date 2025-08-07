@@ -1,7 +1,8 @@
 package com.audio.service;
 
 import com.audio.client.StripeClient;
-import com.audio.dto.*;
+import com.audio.dto.request.PaymentServiceRequest;
+import com.audio.dto.response.*;
 import com.audio.entity.*;
 import com.audio.enums.OrderStatus;
 import com.audio.enums.PaymentStatus;
@@ -53,14 +54,14 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public PaymentResponse initiatePayment(UUID orderId, UUID userId) {
+    public PaymentServiceResponse initiatePayment(UUID orderId, UUID userId) {
         OrderEntity order = orderService.getOrderEntity(orderId, userId);
 
         if (order.getStatus() != OrderStatus.CREATED) {
             throw new OrderOperationException("Order cannot be paid");
         }
 
-        PaymentRequest request = new PaymentRequest(
+        PaymentServiceRequest request = new PaymentServiceRequest(
                 orderId,
                 userId,
                 order.getTotalAmount(),
@@ -70,7 +71,7 @@ public class PaymentService {
         return createPayment(request);
     }
 
-    public PaymentResponse createPayment(PaymentRequest request) {
+    public PaymentServiceResponse createPayment(PaymentServiceRequest request) {
         try {
             PaymentIntent intent = stripeClient.createPaymentIntent(request);
 
@@ -170,14 +171,14 @@ public class PaymentService {
 
     private void processOrderCompletion(PaymentEntity payment) {
         if (payment.getOrderId() != null) {
-            OrderDto order = orderService.completeOrder(payment.getOrderId());
+            OrderServiceResponse order = orderService.completeOrder(payment.getOrderId());
             sendPaymentReceiptEmail(order, payment);
         }
     }
 
-    private void sendPaymentReceiptEmail(OrderDto order, PaymentEntity payment) {
+    private void sendPaymentReceiptEmail(OrderServiceResponse order, PaymentEntity payment) {
         try {
-            UserResponseDto user = userService.findById(order.getUserId())
+            UserServiceResponse user = userService.findById(order.getUserId())
                     .orElseThrow(() -> new UserNotFoundException(order.getUserId()));
 
             Map<String, Object> emailData = new HashMap<>();
@@ -197,9 +198,9 @@ public class PaymentService {
         }
     }
 
-    private void addDigitalContent(OrderDto order, Map<String, Object> emailData) {
-        for (OrderItemDto item : order.getItems()) {
-            ProductResponseDtoPaid product = productService.getProductForPaid(item.getProductId());
+    private void addDigitalContent(OrderServiceResponse order, Map<String, Object> emailData) {
+        for (OrderItemServiceResponse item : order.getItems()) {
+            ProductServiceResponsePaid product = productService.getProductForPaid(item.getProductId());
             if (product.digitalContent() != null && !product.digitalContent().isEmpty()) {
                 emailData.put("digitalKey", product.digitalContent());
                 emailData.put("downloadLink",
@@ -226,7 +227,7 @@ public class PaymentService {
         }
     }
 
-    private PaymentEntity buildPaymentEntity(PaymentRequest request, PaymentIntent intent) {
+    private PaymentEntity buildPaymentEntity(PaymentServiceRequest request, PaymentIntent intent) {
         return PaymentEntity.builder()
                 .orderId(request.getOrderId())
                 .userId(request.getUserId())
@@ -236,8 +237,8 @@ public class PaymentService {
                 .build();
     }
 
-    private PaymentResponse buildPaymentResponse(PaymentEntity payment, PaymentIntent intent) {
-        return new PaymentResponse(
+    private PaymentServiceResponse buildPaymentResponse(PaymentEntity payment, PaymentIntent intent) {
+        return new PaymentServiceResponse(
                 payment.getId(),
                 intent.getClientSecret(),
                 payment.getAmount()

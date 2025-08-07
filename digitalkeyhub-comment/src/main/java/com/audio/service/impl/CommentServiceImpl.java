@@ -1,9 +1,9 @@
 package com.audio.service.impl;
 
 
-import com.audio.dto.CommentDto;
-import com.audio.dto.UserDto;
-import com.audio.dto.UserResponseDto;
+import com.audio.dto.CommentServiceResponse;
+import com.audio.dto.response.UserServiceInfoResponse;
+import com.audio.dto.response.UserServiceResponse;
 import com.audio.entity.CommentEntity;
 import com.audio.exception.AccessDeniedException;
 import com.audio.repository.CommentRepository;
@@ -27,8 +27,7 @@ public class CommentServiceImpl implements CommentService {
     private final UserService userService;
 
     @Override
-    @Cacheable(value = "commentsByEntity", key = "#entityType + '_' + #entityId")
-    public List<CommentDto> getCommentsForEntity(UUID entityId, String entityType) {
+    public List<CommentServiceResponse> getCommentsForEntity(UUID entityId, String entityType) {
         return commentRepository.findByEntityIdAndEntityTypeOrderByCreatedAtDesc(entityId, entityType)
                 .stream()
                 .map(this::mapToDto)
@@ -36,7 +35,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto addComment(UUID entityId, String entityType, UUID userId, String content) {
+    public CommentServiceResponse addComment(UUID entityId, String entityType, UUID userId, String content) {
         CommentEntity comment = CommentEntity.builder()
                 .entityId(entityId)
                 .entityType(entityType)
@@ -48,7 +47,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @CacheEvict(value = "commentDeleteId", key =  "#commentId")
     public void deleteComment(UUID commentId, UUID userId) {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
@@ -60,15 +58,15 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
     }
 
-    private CommentDto mapToDto(CommentEntity entity) {
-        UserResponseDto user = userService.findById(entity.getUserId())
+    private CommentServiceResponse mapToDto(CommentEntity entity) {
+        UserServiceResponse user = userService.findById(entity.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return CommentDto.builder()
+        return CommentServiceResponse.builder()
                 .id(entity.getId())
                 .content(entity.getContent())
                 .createdAt(entity.getCreatedAt())
-                .user(new UserDto(user.id(), user.email()))
+                .user(new UserServiceInfoResponse(user.id(), user.email()))
                 .build();
     }
 }
