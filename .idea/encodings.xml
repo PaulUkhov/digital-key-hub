@@ -7,6 +7,8 @@
     <file url="file://$PROJECT_DIR$/digitalkeyhub-app/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-comment/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-comment/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/digitalkeyhub-common-config/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/digitalkeyhub-common-config/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-core/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/digitalkeyhub-interfaces/src/main/java" charset="UTF-8" />
@@ -29,6 +31,8 @@
     <file url="file://$PROJECT_DIR$/digitalkeyhub-user/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/untitled/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/untitled/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/user/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/user/src/main/resources" charset="UTF-8" />
   </component>

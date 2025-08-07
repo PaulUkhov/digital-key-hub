@@ -2,6 +2,7 @@ package com.audio.configSecurity.service;
 
 import com.audio.configSecurity.user.SecurityUser;
 import com.audio.configSecurity.user.UserDetailsServiceImpl;
+import com.audio.entity.Role;
 import com.audio.entity.UserEntity;
 import com.audio.repository.UserRepository;
 import com.audio.configSecurity.dto.AuthResponse;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +34,13 @@ public class AuthService {
             throw new AuthException("Email already in use");
         }
 
+
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(request.email());
         userEntity.setPassword(encoder.encode(request.password()));
+        Role defaultRole = new Role();
+        defaultRole.setName("USER");
+        userEntity.setRoles(Set.of(defaultRole));
         UserEntity savedUser = userRepository.save(userEntity);
 
         UserDetails userDetails = new SecurityUser(savedUser);

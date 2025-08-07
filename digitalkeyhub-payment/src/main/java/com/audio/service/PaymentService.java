@@ -24,14 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class PaymentService {
-    private static final String CREDIT_CARD_PAYMENT_METHOD = "Credit Card";
+    private static final String CURRENCY = "USD";
     private static final String DEFAULT_SUPPORT_EMAIL = "support@audio.com";
     private static final String DEFAULT_BASE_URL = "https://audio.com";
 
@@ -65,7 +64,7 @@ public class PaymentService {
                 orderId,
                 userId,
                 order.getTotalAmount(),
-                "USD"
+                CURRENCY
         );
 
         return createPayment(request);

@@ -1,6 +1,6 @@
 package com.audio.controller.storage;
 
-import com.audio.service.MinioStorageService;
+import com.audio.service.impl.MinioStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;

@@ -4,6 +4,7 @@ import com.audio.dto.ProfileDto;
 import com.audio.dto.ProfileResponseDto;
 import com.audio.dto.RegisterDto;
 import com.audio.dto.UserResponseDto;
+import com.audio.service.ProfileService;
 import com.audio.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final ProfileService profileService;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> register(@Valid @RequestBody RegisterDto dto) {
@@ -50,13 +52,13 @@ public class UserController {
     public ResponseEntity<ProfileResponseDto> updateProfile(
             @PathVariable("userId") UUID userId,
             @Valid @RequestBody ProfileDto dto) {
-        return ResponseEntity.ok(userService.updateProfile(userId, dto));
+        return ResponseEntity.ok(profileService.updateProfile(userId, dto));
     }
 
     @PatchMapping("/{userId}/avatar")
     public ResponseEntity<ProfileResponseDto> updateAvatar(
             @PathVariable("userId") UUID userId,
             @RequestParam("file") @NotNull MultipartFile file) {
-        return ResponseEntity.ok(userService.updateAvatar(userId, file));
+        return ResponseEntity.ok(profileService.updateAvatar(userId, file));
     }
 }
