@@ -3,7 +3,7 @@ package com.audio.payment.controller;
 import com.audio.payment.dto.request.PaymentRequest;
 import com.audio.payment.dto.response.PaymentResponse;
 import com.audio.payment.mappper.PaymentMapper;
-import com.audio.service.PaymentInvokerServiceImpl;
+import com.audio.service.PaymentInvokerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentController {
-    private final PaymentInvokerServiceImpl invokerService;
+    private final PaymentInvokerService paymentInvokerService;
     private final PaymentMapper paymentMapper;
 
 
@@ -26,7 +26,7 @@ public class PaymentController {
             @Valid @RequestBody PaymentRequest request,
             @RequestParam("userId") UUID userId) {
         return paymentMapper.toResponse(
-                invokerService.createPayment(
+                paymentInvokerService.createPayment(
                         paymentMapper.toServiceRequest(request, userId)
                 )
         );
@@ -37,7 +37,7 @@ public class PaymentController {
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String sigHeader) {
         log.info("Received payment webhook");
-        invokerService.handlePaymentWebhook(payload, sigHeader);
+        paymentInvokerService.handlePaymentWebhook(payload, sigHeader);
         return ResponseEntity.ok().build();
     }
 
@@ -46,7 +46,7 @@ public class PaymentController {
             @PathVariable("orderId") UUID orderId,
             @RequestParam("userId") UUID userId) {
         return paymentMapper.toResponse(
-                invokerService.initiatePayment(orderId, userId)
+                paymentInvokerService.initiatePayment(orderId, userId)
         );
     }
 }
