@@ -19,12 +19,14 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -53,8 +55,9 @@ public class PaymentService {
         Stripe.apiKey = stripeApiKey;
     }
 
+    @Async
     @Transactional(readOnly = true)
-    public PaymentServiceResponse initiatePayment(UUID orderId, UUID userId) {
+    public CompletableFuture<PaymentServiceResponse> initiatePayment(UUID orderId, UUID userId) {
         OrderEntity order = orderService.getOrderEntity(orderId, userId);
 
         if (order.getStatus() != OrderStatus.CREATED) {
@@ -67,34 +70,43 @@ public class PaymentService {
                 order.getTotalAmount(),
                 CURRENCY
         );
-
-        return createPayment(request);
+        return createPaymentAsync(request);
     }
 
-    public PaymentServiceResponse createPayment(PaymentServiceRequest request) {
+    @Async
+    public CompletableFuture<PaymentServiceResponse> createPaymentAsync(PaymentServiceRequest request) {
         try {
             PaymentIntent intent = stripeClient.createPaymentIntent(request);
 
             PaymentEntity payment = buildPaymentEntity(request, intent);
             paymentRepository.save(payment);
 
-            return buildPaymentResponse(payment, intent);
+            PaymentServiceResponse response = buildPaymentResponse(payment, intent);
+            return CompletableFuture.completedFuture(response);
         } catch (Exception e) {
-            throw new PaymentProcessingException("Failed to create payment: " + e.getMessage());
+            CompletableFuture<PaymentServiceResponse> failedFuture = new CompletableFuture<>();
+            failedFuture.completeExceptionally(new PaymentProcessingException("Failed to create payment: " + e.getMessage()));
+            return failedFuture;
         }
     }
 
-    public void handlePaymentWebhook(String payload, String sigHeader) {
+@Async
+    public CompletableFuture<Void> handlePaymentWebhook(String payload, String sigHeader) {
         try {
             log.info("Processing payment webhook event");
             Event event = validateWebhookEvent(payload, sigHeader);
             processWebhookEvent(event);
+            return CompletableFuture.completedFuture(null);
         } catch (SignatureVerificationException e) {
             log.error("Invalid webhook signature", e);
-            throw new InvalidWebhookSignatureException("Invalid signature");
+            CompletableFuture<Void> failedFuture = new CompletableFuture<>();
+            failedFuture.completeExceptionally(new InvalidWebhookSignatureException("Invalid signature"));
+            return failedFuture;
         } catch (Exception e) {
             log.error("Webhook processing failed", e);
-            throw new PaymentProcessingException("Webhook error: " + e.getMessage());
+            CompletableFuture<Void> failedFuture = new CompletableFuture<>();
+            failedFuture.completeExceptionally(new PaymentProcessingException("Webhook error: " + e.getMessage()));
+            return failedFuture;
         }
     }
 
@@ -128,17 +140,24 @@ public class PaymentService {
         log.warn("Payment failed: {}, Error: {}", paymentIntent.getId(), errorMessage);
         failPayment(paymentIntent.getId(), errorMessage);
     }
-
-    void completePayment(PaymentIntent paymentIntent) {
+@Async
+   public CompletableFuture<Void> completePayment(PaymentIntent paymentIntent) {
         String stripePaymentId = paymentIntent.getId();
         log.info("Completing payment: {}", stripePaymentId);
 
-        PaymentEntity payment = paymentRepository.findByStripePaymentId(stripePaymentId)
-                .orElseGet(() -> createNewPaymentEntity(paymentIntent));
+        try {
+            PaymentEntity payment = paymentRepository.findByStripePaymentId(stripePaymentId)
+                    .orElseGet(() -> createNewPaymentEntity(paymentIntent));
 
-        updatePaymentAsSuccessful(payment);
-        processOrderCompletion(payment);
+            updatePaymentAsSuccessful(payment);
+            processOrderCompletion(payment);
+            return CompletableFuture.completedFuture(null);
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(
+                    new PaymentProcessingException("Failed to complete payment: " + e.getMessage()));
+        }
     }
+
 
     private PaymentEntity createNewPaymentEntity(PaymentIntent paymentIntent) {
         PaymentEntity payment = new PaymentEntity();
@@ -176,7 +195,8 @@ public class PaymentService {
         }
     }
 
-    private void sendPaymentReceiptEmail(OrderServiceResponse order, PaymentEntity payment) {
+    @Async
+    public CompletableFuture<Void> sendPaymentReceiptEmail(OrderServiceResponse order, PaymentEntity payment) {
         try {
             UserServiceResponse user = userService.findById(order.getUserId())
                     .orElseThrow(() -> new UserNotFoundException(order.getUserId()));
@@ -193,8 +213,12 @@ public class PaymentService {
                     "Your Purchase - Digital Key Included #" + order.getId(),
                     emailData
             );
+            return CompletableFuture.completedFuture(null);
         } catch (Exception e) {
             log.error("Failed to send payment receipt email for order {}", order.getId(), e);
+            return CompletableFuture.failedFuture(
+                    new PaymentProcessingException("Failed to send payment receipt email: " + e.getMessage()));
+
         }
     }
 
