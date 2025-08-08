@@ -1,6 +1,11 @@
 package com.audio.service;
 
 import com.audio.dto.*;
+import com.audio.dto.request.ProductServiceCreateRequest;
+import com.audio.dto.request.ProductServiceUpdateRequest;
+import com.audio.dto.response.ProductServiceDetailsResponse;
+import com.audio.dto.response.ProductServiceResponse;
+import com.audio.dto.response.ProductServiceResponsePaid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,19 +15,21 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface ProductService {
-    ProductResponseDto createProduct(ProductCreateDto createDto);
-    ProductResponseDto getProductById(UUID id);
-    Page<ProductResponseDto> getAllProducts(Pageable pageable);
-    Page<ProductResponseDto> searchProducts(String name, BigDecimal minPrice,
-                                            BigDecimal maxPrice, Boolean isActive,
-                                            Pageable pageable);
-    ProductResponseDto updateProduct(UUID id, ProductUpdateDto updateDto);
-    ProductResponseDto updateProductPhoto(UUID id, MultipartFile image) throws IOException;
-    ProductResponseDto deleteProductPhoto(UUID id);
+    ProductServiceResponse createProduct(ProductServiceCreateRequest createDto);
+    ProductServiceResponse getProductById(UUID id);
+    Page<ProductServiceResponse> getAllProducts(Pageable pageable);
+    Page<ProductServiceResponse> searchProducts(String name, BigDecimal minPrice,
+                                                BigDecimal maxPrice, Boolean isActive,
+                                                Pageable pageable);
+    ProductServiceResponse updateProduct(UUID id, ProductServiceUpdateRequest updateDto);
+    ProductServiceResponse updateProductPhoto(UUID id, MultipartFile image) throws IOException;
+    ProductServiceResponse deleteProductPhoto(UUID id);
     byte[] getProductPhoto(UUID id) throws IOException;
     void deleteProduct(UUID id);
-    ProductResponseDto setProductActiveStatus(UUID id, boolean isActive);
-    ProductResponseDto updateStockQuantity(UUID id, int quantityChange);
+    ProductServiceResponse setProductActiveStatus(UUID id, boolean isActive);
+    ProductServiceResponse updateStockQuantity(UUID id, int quantityChange);
 
-    ProductResponseDtoPaid getProductForPaid(UUID productId);
+    ProductServiceResponsePaid getProductForPaid(UUID productId);
+    ProductServiceDetailsResponse getProductDetailsById(UUID productId, UUID currentUserId);
+    CommentServiceResponse addCommentToProduct(UUID productId, UUID userId, String content);
 }

@@ -1,8 +1,8 @@
 package com.audio.mapper;
 
-import com.audio.dto.ProductCreateDto;
-import com.audio.dto.ProductResponseDto;
-import com.audio.dto.ProductUpdateDto;
+import com.audio.dto.request.ProductServiceCreateRequest;
+import com.audio.dto.response.ProductServiceResponse;
+import com.audio.dto.request.ProductServiceUpdateRequest;
 import com.audio.entity.ProductEntity;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class ProductMapperImpl implements ProductMapper {
 
     @Override
-    public ProductEntity toEntity(ProductCreateDto createDto) {
+    public ProductEntity toEntity(ProductServiceCreateRequest createDto) {
         if (createDto == null) {
             return null;
         }
@@ -31,12 +31,12 @@ public class ProductMapperImpl implements ProductMapper {
     }
 
     @Override
-    public ProductResponseDto toResponseDto(ProductEntity entity) {
+    public ProductServiceResponse toResponseDto(ProductEntity entity) {
         if (entity == null) {
             return null;
         }
 
-        return new ProductResponseDto(
+        return new ProductServiceResponse(
                 entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
@@ -51,7 +51,7 @@ public class ProductMapperImpl implements ProductMapper {
     }
 
     @Override
-    public void updateEntity(ProductUpdateDto updateDto, ProductEntity entity) {
+    public void updateEntity(ProductServiceUpdateRequest updateDto, ProductEntity entity) {
         if (updateDto == null || entity == null) {
             return;
         }

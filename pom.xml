@@ -19,6 +19,7 @@
         <module>digitalkeyhub-product</module>
         <module>digitalkeyhub-storage</module>
         <module>digitalkeyhub-order</module>
+        <module>digitalkeyhub-common-config</module>
     </modules>
 
     <properties>

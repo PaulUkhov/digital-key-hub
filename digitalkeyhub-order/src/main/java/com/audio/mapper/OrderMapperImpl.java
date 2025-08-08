@@ -1,7 +1,7 @@
 package com.audio.mapper;
 
-import com.audio.dto.OrderDto;
-import com.audio.dto.OrderItemDto;
+import com.audio.dto.response.OrderServiceResponse;
+import com.audio.dto.response.OrderItemServiceResponse;
 import com.audio.entity.OrderEntity;
 import com.audio.entity.OrderItemEntity;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderMapperImpl implements OrderMapper {
     @Override
-    public OrderEntity toOrderEntity(OrderDto orderDto) {
+    public OrderEntity toOrderEntity(OrderServiceResponse orderDto) {
         return OrderEntity.builder()
                 .id(orderDto.getId())
                 .userId(orderDto.getUserId())
@@ -21,8 +21,8 @@ public class OrderMapperImpl implements OrderMapper {
     }
 
     @Override
-    public OrderDto toOrderDto(OrderEntity orderEntity) {
-        return OrderDto.builder()
+    public OrderServiceResponse toOrderDto(OrderEntity orderEntity) {
+        return OrderServiceResponse.builder()
                 .id(orderEntity.getId())
                 .userId(orderEntity.getUserId())
                 .items(orderEntity.getItems().stream().map(this::toOrderItemDto).toList())
@@ -33,8 +33,8 @@ public class OrderMapperImpl implements OrderMapper {
     }
 
     @Override
-    public OrderItemDto toOrderItemDto(OrderItemEntity orderItem) {
-        return OrderItemDto.builder()
+    public OrderItemServiceResponse toOrderItemDto(OrderItemEntity orderItem) {
+        return OrderItemServiceResponse.builder()
                 .id(orderItem.getId())
                 .productId(orderItem.getProductId())
                 .quantity(orderItem.getQuantity())
@@ -45,7 +45,7 @@ public class OrderMapperImpl implements OrderMapper {
     }
 
     @Override
-    public OrderItemEntity toOrderItemEntity(OrderItemDto orderItemDto) {
+    public OrderItemEntity toOrderItemEntity(OrderItemServiceResponse orderItemDto) {
         return OrderItemEntity.builder()
                 .id(orderItemDto.getId())
                 .productId(orderItemDto.getProductId())

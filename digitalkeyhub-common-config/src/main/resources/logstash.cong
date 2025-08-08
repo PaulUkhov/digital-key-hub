@@ -1,0 +1,43 @@
+# digitalkeyhub-common-config/src/main/resources/logstash/logstash-spring.conf
+input {
+  tcp {
+    port => 5000
+    codec => json_lines {
+      charset => "UTF-8"
+    }
+    id => "spring_input"
+  }
+}
+
+filter {
+  mutate {
+    add_field => {
+      "[@metadata][service]" => "digitalkeyhub"
+    }
+  }
+
+  if [@timestamp] {
+    date {
+      match => ["[@timestamp]", "ISO8601"]
+      target => "@timestamp"
+    }
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["http://elasticsearch:9200"]
+    index => "digitalkeyhub-%{[@metadata][service]}-%{+YYYY.MM.dd}"
+    document_type => "_doc"
+    template => "/usr/share/logstash/templates/spring-template.json"
+    template_name => "spring-logs"
+  }
+
+  if [@metadata][pipeline] == "dev" {
+    stdout {
+      codec => rubydebug {
+        metadata => true
+      }
+    }
+  }
+}

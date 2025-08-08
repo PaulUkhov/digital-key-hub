@@ -1,0 +1,13 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <include file="user/V5__create_user_tables.sql" relativeToChangelogFile="true"/>
+    <include file="payment/V3__payment_init.sql" relativeToChangelogFile="true"/>
+    <include file="product/V4__product_init.sql" relativeToChangelogFile="true"/>
+    <include file="order/V2__order_init.sql" relativeToChangelogFile="true"/>
+    <include file="comment/V1__comment_init.sql" relativeToChangelogFile="true"/>
+    <include file="user/V6__insert_roles.sql" relativeToChangelogFile="true"/>
+</databaseChangeLog>

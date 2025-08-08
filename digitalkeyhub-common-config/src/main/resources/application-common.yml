@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    include:
+      - logging  # Можно перечислить несколько профилей
+      - common   # Дополнительный общий профиль
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    org:
+      springframework: WARN
+      hibernate: INFO
+    com:
+      digitalkeyhub: DEBUG
