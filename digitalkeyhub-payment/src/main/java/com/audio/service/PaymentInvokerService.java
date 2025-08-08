@@ -15,6 +15,4 @@ public interface PaymentInvokerService {
     CompletableFuture<Void> completePayment(PaymentIntent paymentIntent);
     CompletableFuture<Void> sendPaymentReceiptEmail(OrderServiceResponse order, PaymentEntity payment);
     PaymentServiceResponse initiatePayment(UUID orderId, UUID userId);
-
-
 }
