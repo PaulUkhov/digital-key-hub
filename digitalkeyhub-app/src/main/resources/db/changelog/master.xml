@@ -10,4 +10,5 @@
     <include file="./product/V4__product_init.sql" relativeToChangelogFile="true"/>
     <include file="./order/V2__order_init.sql" relativeToChangelogFile="true"/>
     <include file="./comment/V1__comment_init.sql" relativeToChangelogFile="true"/>
+    <include file="./user/V6__insert_roles.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

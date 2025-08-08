@@ -1,5 +1,6 @@
 package com.audio.service;
 
+import com.audio.repository.RoleRepository;
 import com.audio.user.SecurityUser;
 import com.audio.user.UserDetailsServiceImpl;
 import com.audio.entity.Role;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -22,8 +24,10 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserDetailsServiceImpl userDetailsService;
 
+    @Transactional
     public AuthServiceResponse register(RegisterServiceRequest request) {
         if (request.email() == null || request.email().isEmpty() ||
                 request.password() == null || request.password().isEmpty()) {
@@ -34,13 +38,17 @@ public class AuthService {
             throw new AuthException("Email already in use");
         }
 
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setName("ROLE_USER");
+                    return roleRepository.save(newRole);
+                });
 
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(request.email());
         userEntity.setPassword(encoder.encode(request.password()));
-        Role defaultRole = new Role();
-        defaultRole.setName("USER");
-        userEntity.setRoles(Set.of(defaultRole));
+        userEntity.setRoles(Set.of(userRole));
         UserEntity savedUser = userRepository.save(userEntity);
 
         UserDetails userDetails = new SecurityUser(savedUser);
