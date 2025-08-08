@@ -1,4 +1,11 @@
 spring:
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+    contexts: dev
+    default-schema: public
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    url: ${spring.datasource.url}
   profiles:
     active: local
   config:
