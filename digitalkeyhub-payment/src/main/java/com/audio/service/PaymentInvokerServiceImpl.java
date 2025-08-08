@@ -30,8 +30,8 @@ public class PaymentInvokerServiceImpl implements PaymentInvokerService {
         }
     }
 
-    public CompletableFuture<Void> handlePaymentWebhook(String payload, String sigHeader) {
-        return paymentService.handlePaymentWebhook(payload, sigHeader);
+    public void handlePaymentWebhook(String payload, String sigHeader) {
+        paymentService.handlePaymentWebhook(payload, sigHeader);
     }
 
     public CompletableFuture<Void> completePayment(PaymentIntent paymentIntent) {
