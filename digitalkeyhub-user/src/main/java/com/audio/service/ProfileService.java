@@ -1,12 +1,12 @@
 package com.audio.service;
 
-import com.audio.dto.ProfileDto;
-import com.audio.dto.ProfileResponseDto;
+import com.audio.dto.request.ProfileUpdateServiceRequest;
+import com.audio.dto.response.ProfileServiceResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
 public interface ProfileService {
-    ProfileResponseDto updateProfile(UUID userId, ProfileDto dto);
-    ProfileResponseDto updateAvatar(UUID userId, MultipartFile image);
+    ProfileServiceResponse updateProfile(UUID userId, ProfileUpdateServiceRequest dto);
+    ProfileServiceResponse updateAvatar(UUID userId, MultipartFile image);
 }

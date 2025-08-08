@@ -1,9 +1,9 @@
 package com.audio.client;
 
-import com.audio.dto.PaymentRequest;
+import com.audio.dto.request.PaymentServiceRequest;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 
 public interface StripeClient {
-    PaymentIntent createPaymentIntent(PaymentRequest request) throws StripeException;
+    PaymentIntent createPaymentIntent(PaymentServiceRequest request) throws StripeException;
 }

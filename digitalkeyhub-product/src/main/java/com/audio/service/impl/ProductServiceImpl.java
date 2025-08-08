@@ -1,6 +1,13 @@
 package com.audio.service.impl;
 
+import com.audio.cache.CacheProductDto;
+import com.audio.cache.ProductCacheService;
 import com.audio.dto.*;
+import com.audio.dto.request.ProductServiceCreateRequest;
+import com.audio.dto.request.ProductServiceUpdateRequest;
+import com.audio.dto.response.ProductServiceDetailsResponse;
+import com.audio.dto.response.ProductServiceResponse;
+import com.audio.dto.response.ProductServiceResponsePaid;
 import com.audio.entity.ProductEntity;
 import com.audio.exception.ProductNotFoundException;
 import com.audio.like.service.LikeService;
@@ -10,9 +17,6 @@ import com.audio.service.CommentService;
 import com.audio.service.FileStorageService;
 import com.audio.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,37 +32,37 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
+    private final ProductCacheService productCacheService;
     private final ProductMapper productMapper;
     private final FileStorageService storageService;
     private final CommentService commentService;
     private final LikeService likeService;
+    private final ProductRepository productRepository;
 
+    @Override
     @Transactional
-    public ProductResponseDto createProduct(ProductCreateDto createDto) {
-        ProductEntity product = productMapper.toEntity(createDto);
-        ProductEntity savedProduct = productRepository.save(product);
-        return productMapper.toResponseDto(savedProduct);
+    public ProductServiceResponse createProduct(ProductServiceCreateRequest createDto) {
+        CacheProductDto cacheDto = productCacheService.create(createDto);
+        return convertToResponseDto(cacheDto);
     }
 
-    @Cacheable(value = "getProductById", key = "#id")
+    @Override
     @Transactional(readOnly = true)
-    public ProductResponseDto getProductById(UUID id) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-        return productMapper.toResponseDto(product);
+    public ProductServiceResponse getProductById(UUID id) {
+        CacheProductDto cacheDto = productCacheService.getById(id);
+        return convertToResponseDto(cacheDto);
     }
 
-    @Cacheable(value = "getAllProducts")
+    @Override
     @Transactional(readOnly = true)
-    public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
+    public Page<ProductServiceResponse> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable)
-                .map(productMapper::toResponseDto);
+                .map(this::convertEntityToResponseDto);
     }
 
-    @Cacheable(value = "productsByFilters", key = "#name + ' ' + #minPrice + ' ' + #maxPrice + ' ' + #isActive + ' ' + #pageable.pageNumber + ' ' + #pageable.pageSize + ' ' + #pageable.sort.toString()")
+    @Override
     @Transactional(readOnly = true)
-    public Page<ProductResponseDto> searchProducts(
+    public Page<ProductServiceResponse> searchProducts(
             String name,
             BigDecimal minPrice,
             BigDecimal maxPrice,
@@ -70,180 +74,186 @@ public class ProductServiceImpl implements ProductService {
                 maxPrice,
                 isActive,
                 pageable
-        ).map(productMapper::toResponseDto);
+        ).map(this::convertEntityToResponseDto);
     }
 
-    @CachePut(value = "productCache", key = "#id")
+    @Override
     @Transactional
-    public ProductResponseDto updateProduct(UUID id, ProductUpdateDto updateDto) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-
-        productMapper.updateEntity(updateDto, product);
-        ProductEntity updatedProduct = productRepository.save(product);
-        return productMapper.toResponseDto(updatedProduct);
+    public ProductServiceResponse updateProduct(UUID id, ProductServiceUpdateRequest updateDto) {
+        CacheProductDto cacheDto = productCacheService.update(id, updateDto);
+        return convertToResponseDto(cacheDto);
     }
 
-    @Cacheable(value = "productCachePhoto", key = "#id + #image")
+    @Override
     @Transactional
-    public ProductResponseDto updateProductPhoto(UUID id, MultipartFile image) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-
+    public ProductServiceResponse updateProductPhoto(UUID id, MultipartFile image) {
+        CacheProductDto cacheDto = productCacheService.getById(id);
         try {
-            if (product.getPhotoUrl() != null) {
-                storageService.deleteFile(product.getPhotoUrl());
+            if (cacheDto.getPhotoUrl() != null) {
+                storageService.deleteFile(cacheDto.getPhotoUrl());
             }
 
             String extension = getFileExtension(image.getOriginalFilename());
             String newFileName = "product_" + id + "_" + System.currentTimeMillis() + "." + extension;
             String filePath = storageService.uploadFile(image, newFileName);
 
-            product.setPhotoUrl(filePath);
-            ProductEntity updatedProduct = productRepository.save(product);
-            return productMapper.toResponseDto(updatedProduct);
+            ProductServiceUpdateRequest updateDto = ProductServiceUpdateRequest.builder()
+                    .photoUrl(filePath)
+                    .build();
+
+            CacheProductDto updatedCacheDto = productCacheService.update(id, updateDto);
+            return convertToResponseDto(updatedCacheDto);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update product photo", e);
         }
     }
 
-    @CacheEvict(value = "deletePhotoById", key = "#id")
+    @Override
     @Transactional
-    public ProductResponseDto deleteProductPhoto(UUID id) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+    public ProductServiceResponse deleteProductPhoto(UUID id) {
+        CacheProductDto cacheDto = productCacheService.getById(id);
 
-        if (product.getPhotoUrl() != null) {
+        if (cacheDto.getPhotoUrl() != null) {
             try {
-                storageService.deleteFile(product.getPhotoUrl());
-                product.setPhotoUrl(null);
-                ProductEntity updatedProduct = productRepository.save(product);
-                return productMapper.toResponseDto(updatedProduct);
+                storageService.deleteFile(cacheDto.getPhotoUrl());
+
+                ProductServiceUpdateRequest updateDto = ProductServiceUpdateRequest.builder()
+                        .photoUrl(null)
+                        .build();
+
+                CacheProductDto updatedCacheDto = productCacheService.update(id, updateDto);
+                return convertToResponseDto(updatedCacheDto);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to delete product photo", e);
             }
         }
-        return productMapper.toResponseDto(product);
+        return convertToResponseDto(cacheDto);
     }
 
-    @Cacheable(value = "productCachePhoto", key = "#id")
+    @Override
     @Transactional(readOnly = true)
     public byte[] getProductPhoto(UUID id) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+        CacheProductDto cacheDto = productCacheService.getById(id);
 
-        if (product.getPhotoUrl() == null) {
+        if (cacheDto.getPhotoUrl() == null) {
             throw new RuntimeException("Product photo not found");
         }
 
-        try (InputStream inputStream = storageService.getFile(product.getPhotoUrl())) {
+        try (InputStream inputStream = storageService.getFile(cacheDto.getPhotoUrl())) {
             return inputStream.readAllBytes();
         } catch (Exception e) {
             throw new RuntimeException("Failed to get product photo", e);
         }
     }
 
-    @CacheEvict(value = "deleteProductByID", key = "#id")
+    @Override
     @Transactional
     public void deleteProduct(UUID id) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-
-        if (product.getPhotoUrl() != null) {
-            try {
-                storageService.deleteFile(product.getPhotoUrl());
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to delete product photo", e);
-            }
-        }
-
-        productRepository.delete(product);
+        productCacheService.delete(id);
     }
 
+    @Override
     @Transactional
-    public ProductResponseDto setProductActiveStatus(UUID id, boolean isActive) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-
-        product.setIsActive(isActive);
-        ProductEntity updatedProduct = productRepository.save(product);
-        return productMapper.toResponseDto(updatedProduct);
+    public ProductServiceResponse setProductActiveStatus(UUID id, boolean isActive) {
+        CacheProductDto cacheDto = productCacheService.updateActiveStatus(id, isActive);
+        return convertToResponseDto(cacheDto);
     }
 
+    @Override
     @Transactional
-    public ProductResponseDto updateStockQuantity(UUID id, int quantityChange) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+    public ProductServiceResponse updateStockQuantity(UUID id, int quantityChange) {
+        CacheProductDto cacheDto = productCacheService.updateStockQuantity(id, quantityChange);
+        return convertToResponseDto(cacheDto);
+    }
 
-        int newQuantity = product.getStockQuantity() + quantityChange;
-        if (newQuantity < 0) {
-            throw new RuntimeException("Insufficient stock quantity");
+    @Override
+    @Transactional(readOnly = true)
+    public ProductServiceResponsePaid getProductForPaid(UUID id) {
+        CacheProductDto cacheDto = productCacheService.getById(id);
+        return ProductServiceResponsePaid.builder()
+                .id(cacheDto.getId())
+                .name(cacheDto.getName())
+                .price(cacheDto.getPrice())
+                .photoUrl(cacheDto.getPhotoUrl())
+                .stockQuantity(cacheDto.getStockQuantity())
+                .isActive(cacheDto.getIsActive())
+                .sku(cacheDto.getSku())
+                .description(cacheDto.getDescription())
+                .digitalContent(cacheDto.getDigitalContent())
+                .build();
+    }
+
+    @Override
+    public ProductServiceDetailsResponse getProductDetailsById(UUID productId, UUID currentUserId) {
+        CacheProductDto cacheDto = productCacheService.getById(productId);
+
+        long likesCount = likeService.getLikesCount(productId, "PRODUCT");
+        boolean likedByCurrentUser = currentUserId != null &&
+                likeService.checkIfLiked(productId, "PRODUCT", currentUserId);
+
+        List<CommentServiceResponse> recentComments = commentService.getCommentsForEntity(productId, "PRODUCT")
+                .stream()
+                .limit(5)
+                .toList();
+
+        return ProductServiceDetailsResponse.builder()
+                .id(cacheDto.getId())
+                .name(cacheDto.getName())
+                .description(cacheDto.getDescription())
+                .price(cacheDto.getPrice())
+                .stockQuantity(cacheDto.getStockQuantity())
+                .sku(cacheDto.getSku())
+                .photoUrl(cacheDto.getPhotoUrl())
+                .isActive(cacheDto.getIsActive())
+                .createdAt(cacheDto.getCreatedAt())
+                .updatedAt(cacheDto.getUpdatedAt())
+                .likesCount(likesCount)
+                .likedByCurrentUser(likedByCurrentUser)
+                .recentComments(recentComments)
+                .build();
+    }
+
+    @Override
+    public CommentServiceResponse addCommentToProduct(UUID productId, UUID userId, String content) {
+        if (!productRepository.existsById(productId)) {
+            throw new ProductNotFoundException(productId);
         }
+        return commentService.addComment(productId, "PRODUCT", userId, content);
+    }
 
-        product.setStockQuantity(newQuantity);
-        ProductEntity updatedProduct = productRepository.save(product);
-        return productMapper.toResponseDto(updatedProduct);
+    private ProductServiceResponse convertToResponseDto(CacheProductDto cacheDto) {
+        return ProductServiceResponse.builder()
+                .id(cacheDto.getId())
+                .name(cacheDto.getName())
+                .description(cacheDto.getDescription())
+                .price(cacheDto.getPrice())
+                .stockQuantity(cacheDto.getStockQuantity())
+                .sku(cacheDto.getSku())
+                .photoUrl(cacheDto.getPhotoUrl())
+                .isActive(cacheDto.getIsActive())
+                .createdAt(cacheDto.getCreatedAt())
+                .updatedAt(cacheDto.getUpdatedAt())
+                .build();
+    }
+
+    private ProductServiceResponse convertEntityToResponseDto(ProductEntity entity) {
+        return ProductServiceResponse.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .price(entity.getPrice())
+                .stockQuantity(entity.getStockQuantity())
+                .sku(entity.getSku())
+                .photoUrl(entity.getPhotoUrl())
+                .isActive(entity.getIsActive())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
+                .build();
     }
 
     private String getFileExtension(String filename) {
         if (filename == null) return "jpg";
         int lastDot = filename.lastIndexOf('.');
         return lastDot == -1 ? "jpg" : filename.substring(lastDot + 1);
-    }
-
-    @Transactional(readOnly = true)
-    public ProductResponseDtoPaid getProductForPaid(UUID id) {
-        var product = productRepository.findById(id);
-        return ProductResponseDtoPaid.builder()
-                .id(product.get().getId())
-                .name(product.get().getName())
-                .price(product.get().getPrice())
-                .photoUrl(product.get().getPhotoUrl())
-                .stockQuantity(product.get().getStockQuantity())
-                .isActive(product.get().getIsActive())
-                .sku(product.get().getSku())
-                .description(product.get().getDescription())
-                .digitalContent(product.get().getDigitalContent())
-                .build();
-    }
-
-    @Override
-    public ProductDetailsDto getProductDetailsById(UUID productId, UUID currentUserId) {
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException(productId));
-
-        long likesCount = likeService.getLikesCount(productId, "PRODUCT");
-        boolean likedByCurrentUser = currentUserId != null &&
-                likeService.checkIfLiked(productId, "PRODUCT", currentUserId);
-
-        List<CommentDto> recentComments = commentService.getCommentsForEntity(productId, "PRODUCT")
-                .stream()
-                .limit(5)
-                .toList();
-
-        return new ProductDetailsDto(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getStockQuantity(),
-                product.getSku(),
-                product.getPhotoUrl(),
-                product.getIsActive(),
-                product.getCreatedAt(),
-                product.getUpdatedAt(),
-                likesCount,
-                likedByCurrentUser,
-                recentComments
-        );
-    }
-
-    @Override
-    public CommentDto addCommentToProduct(UUID productId, UUID userId, String content) {
-        if (!productRepository.existsById(productId)) {
-            throw new ProductNotFoundException(productId);
-        }
-
-        return commentService.addComment(productId, "PRODUCT", userId, content);
     }
 }
