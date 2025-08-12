@@ -1,6 +1,9 @@
 package com.audio.service;
 
-import com.audio.dto.*;
+import com.audio.dto.request.OrderCreateServiceRequest;
+import com.audio.dto.response.OrderItemServiceResponse;
+import com.audio.dto.response.OrderServiceResponse;
+import com.audio.dto.response.ProductServiceResponse;
 import com.audio.entity.*;
 import com.audio.enums.OrderStatus;
 import com.audio.exception.*;
@@ -35,7 +38,7 @@ class OrderServiceTest {
     private OrderMapper orderMapper;
 
     @InjectMocks
-    private OrderServiceImpl orderService;
+    private OrderService orderService;
 
     private final UUID testUserId = UUID.randomUUID();
     private final UUID testProductId = UUID.randomUUID();
@@ -45,11 +48,11 @@ class OrderServiceTest {
     @Transactional
     void createOrder_Success() {
         // Arrange
-        OrderCreateDto createDto = new OrderCreateDto(
-                List.of(new OrderItemDto(testProductId, 2))
+        OrderCreateServiceRequest createDto = new OrderCreateServiceRequest(
+                List.of(new OrderItemServiceResponse(testProductId, 2))
         );
 
-        ProductResponseDto product = new ProductResponseDto(
+        ProductServiceResponse product = new ProductServiceResponse(
                 testProductId, "Test Product", "Desc",
                 BigDecimal.valueOf(100),
                 10,
@@ -74,12 +77,12 @@ class OrderServiceTest {
 
         when(productService.getProductById(testProductId)).thenReturn(product);
         when(orderRepository.save(any(OrderEntity.class))).thenReturn(savedOrder);
-        when(orderMapper.toOrderDto(savedOrder)).thenReturn(new OrderDto(
+        when(orderMapper.toOrderDto(savedOrder)).thenReturn(new OrderServiceResponse(
                 testOrderId, testUserId, List.of(), OrderStatus.CREATED, BigDecimal.valueOf(200), null
         ));
 
         // Act
-        OrderDto result = orderService.createOrder(createDto, testUserId);
+        OrderServiceResponse result = orderService.createOrder(createDto, testUserId);
 
         // Assert
         assertNotNull(result);
@@ -90,7 +93,7 @@ class OrderServiceTest {
     @Test
     void createOrder_EmptyItems_ShouldThrowException() {
         // Arrange
-        OrderCreateDto createDto = new OrderCreateDto(List.of());
+        OrderCreateServiceRequest createDto = new OrderCreateServiceRequest(List.of());
 
         // Act & Assert
         assertThrows(OrderOperationException.class, () ->
@@ -108,12 +111,12 @@ class OrderServiceTest {
 
         when(orderRepository.findByIdAndUserId(testOrderId, testUserId))
                 .thenReturn(Optional.of(order));
-        when(orderMapper.toOrderDto(order)).thenReturn(new OrderDto(
+        when(orderMapper.toOrderDto(order)).thenReturn(new OrderServiceResponse(
                 testOrderId, testUserId, List.of(), null, null, null
         ));
 
         // Act
-        OrderDto result = orderService.getOrder(testOrderId, testUserId);
+        OrderServiceResponse result = orderService.getOrder(testOrderId, testUserId);
 
         // Assert
         assertNotNull(result);
@@ -141,12 +144,12 @@ class OrderServiceTest {
 
         when(orderRepository.findByUserId(testUserId))
                 .thenReturn(List.of(order));
-        when(orderMapper.toOrderDto(order)).thenReturn(new OrderDto(
+        when(orderMapper.toOrderDto(order)).thenReturn(new OrderServiceResponse(
                 testOrderId, testUserId, List.of(), null, null, null
         ));
 
         // Act
-        List<OrderDto> result = orderService.getUserOrders(testUserId);
+        List<OrderServiceResponse> result = orderService.getUserOrders(testUserId);
 
         // Assert
         assertEquals(1, result.size());

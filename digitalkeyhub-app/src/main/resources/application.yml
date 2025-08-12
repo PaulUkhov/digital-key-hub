@@ -1,4 +1,11 @@
 spring:
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+    contexts: dev
+    default-schema: public
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    url: ${spring.datasource.url}
   profiles:
     active: local
   config:
@@ -16,3 +23,6 @@ spring:
       - classpath:application-payment-${spring.profiles.active}.yml
       - classpath:application-security.yml
       - classpath:application-notification.properties
+      - classpath:application-redis.properties
+      - classpath:application-redis-${spring.profiles.active}.properties
+      - classpath:application-api.yml
