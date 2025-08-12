@@ -1,6 +1,7 @@
 package com.audio.mapper;
 
 import com.audio.dto.response.ProfileServiceResponse;
+import com.audio.dto.response.UserServiceInfoResponse;
 import com.audio.dto.response.UserServiceResponse;
 import com.audio.entity.ProfileEntity;
 import com.audio.entity.UserEntity;
@@ -19,6 +20,15 @@ public class UserMapperImpl implements UserMapper {
                 toProfileResponseDto(user.getProfile())
         );
     }
+
+    @Override
+    public UserServiceInfoResponse toUserServiceInfoDto(UserEntity user) {
+        return new UserServiceInfoResponse(
+                user.getId(),
+                user.getEmail()
+        );
+    }
+
 
     @Override
     public ProfileServiceResponse toProfileResponseDto(ProfileEntity profile) {

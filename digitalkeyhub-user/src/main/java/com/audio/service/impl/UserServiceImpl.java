@@ -1,6 +1,8 @@
 package com.audio.service.impl;
 
+import com.audio.dto.response.UserServiceInfoResponse;
 import com.audio.dto.response.UserServiceResponse;
+import com.audio.exception.UserNotFoundException;
 import com.audio.mapper.UserMapper;
 import com.audio.repository.UserRepository;
 import com.audio.service.UserService;
@@ -27,18 +29,44 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<UserServiceInfoResponse> findInfoById(UUID id) {
+        return userRepo.findInfoById(id)
+                .map(userMapper::toUserServiceInfoDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<UserServiceResponse> findByEmail(String email) {
         return userRepo.findByEmail(email)
                 .map(userMapper::toUserResponseDto);
     }
 
     @Override
-    public void deleteUser(UUID userId) {
+    @Transactional(readOnly = true)
+    public Optional<UserServiceInfoResponse> findByUsername(String email) {
+        return userRepo.findByEmail(email)
+                .map(userMapper::toUserServiceInfoDto);
+    }
+
+
+    @Override
+    public void deleteById(UUID userId) {
+        if (!userRepo.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
         userRepo.deleteById(userId);
     }
 
+
     @Override
     public boolean existsById(UUID userId) {
-        return userRepo.existsById(userId);
+        userRepo.existsById(userId);
+        return true;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        userRepo.existsByEmail(email);
+        return true;
     }
 }
