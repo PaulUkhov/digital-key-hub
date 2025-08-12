@@ -1,6 +1,7 @@
 package com.audio.order.dto.response;
 
 import com.audio.dto.response.OrderItemServiceResponse;
+import com.audio.enums.OrderStatus;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -35,7 +36,7 @@ public class OrderResponse {
 
     @Schema(description = "Current status of the order. Possible values: " +
             "CREATED, PROCESSING, PAID, SHIPPED, DELIVERED, CANCELLED, REFUNDED, FAILED, COMPLETED")
-    private String status;
+    private OrderStatus status;
 
     @Schema(description = "Total amount of the order",
             example = "99.99")
