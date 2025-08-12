@@ -25,3 +25,4 @@ spring:
       - classpath:application-notification.properties
       - classpath:application-redis.properties
       - classpath:application-redis-${spring.profiles.active}.properties
+      - classpath:application-api.yml
