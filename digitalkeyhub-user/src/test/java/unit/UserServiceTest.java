@@ -7,7 +7,6 @@ import com.audio.exception.UserNotFoundException;
 import com.audio.mapper.UserMapper;
 import com.audio.repository.UserRepository;
 import com.audio.service.impl.UserServiceImpl;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
