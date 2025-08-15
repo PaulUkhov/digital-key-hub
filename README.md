@@ -1,5 +1,10 @@
 ## DigitalKeyHub Platform
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/BogdanPryadko4853/online-shop-spring-boot/main/image.png" alt="DigitalKeyHub Logo" width="400">
+</p>
+
+
 A modular monolithic digital marketplace platform with integrated payment processing, user management, and product storage capabilities.
 
 ## � Project Structure
