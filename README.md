@@ -1,4 +1,4 @@
-# DigitalKeyHub Platform
+## DigitalKeyHub Platform
 
 A modular monolithic digital marketplace platform with integrated payment processing, user management, and product storage capabilities.
 
@@ -6,7 +6,7 @@ A modular monolithic digital marketplace platform with integrated payment proces
 
 This is a modular monolithic application where each component is developed as a separate module within a single codebase:
 
-# 🏗️ Модульная структура проекта
+# 🏗️ Module structure
 
 ```bash
 digitalkeyhub/
