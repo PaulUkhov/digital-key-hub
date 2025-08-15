@@ -1,84 +1,72 @@
 # DigitalKeyHub Platform
 
-A comprehensive digital marketplace platform with payment processing, user management, and product storage capabilities.
+A modular monolithic digital marketplace platform with integrated payment processing, user management, and product storage capabilities.
 
-## 🚀 Features
+## � Project Structure
 
-- **Payment Processing**: Integrated with Stripe for secure transactions
-- **User Management**: Complete user profiles and authentication
-- **Product Storage**: MinIO-based storage solution
-- **Order Management**: Full order lifecycle processing
-- **Notifications**: Real-time email notifications
-- **Microservices Architecture**: Modular and scalable design
+This is a modular monolithic application where each component is developed as a separate module within a single codebase:
 
-## 🛠 Technologies
+digitalkeyhub/
+├── digitalkeyhub-api/ # Core API interfaces
+├── digitalkeyhub-app/ # Main application module
+├── digitalkeyhub-comment/ # Comment functionality
+├── digitalkeyhub-common-config/ # Shared configuration
+├── digitalkeyhub-notification/ # Notification services
+├── digitalkeyhub-order/ # Order management
+├── digitalkeyhub-payment/ # Payment processing
+├── digitalkeyhub-product/ # Product catalog
+├── digitalkeyhub-security/ # Security configurations
+├── digitalkeyhub-storage/ # File storage
+└── digitalkeyhub-user/ # User management
 
-- **Backend**: Java 21, Spring Boot 3
+
+## 🚀 Key Features
+
+- **Modular Architecture**: Single codebase with clearly separated modules
+- **Payment Processing**: Full Stripe integration with webhook support
+- **User Management**: Complete authentication and profile system
+- **Product Management**: Digital product storage with MinIO
+- **Order Processing**: End-to-end order lifecycle management
+- **Email Notifications**: Transactional email system with Thymeleaf templates
+
+## 🛠 Technology Stack
+
+- **Core**: Java 21, Spring Boot 3, Spring Security
 - **Database**: PostgreSQL
-- **Storage**: MinIO
-- **Payment**: Stripe API
-- **Containerization**: Docker
-- **CI/CD**: GitHub Actions
+- **Storage**: MinIO for object storage
+- **Payment**: Stripe API integration
+- **Email**: SMTP with Gmail (test configuration included)
+- **Templates**: Thymeleaf for email templates
+- **Containerization**: Docker with Docker Compose
 
-## 🏗 Architecture Modules
+## ⚙️ Configuration Requirements
 
-The DigitalKeyHub platform consists of these core microservices:
+### Stripe Configuration
+```properties
+stripe.secret-key= your key
+stripe.webhook-secret= your key
+```
 
-### Core Services
-- **User Service**  
-  Handles user authentication, profiles, and permissions
+## Email Configuration
+properties
+```
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=bogdanpryadko1@gmail.com
+spring.mail.password=vrjf xgth yjsz jxbr
+spring.mail.protocol=smtp
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.ssl.trust=smtp.gmail.com
+```
 
-- **Payment Service**  
-  Processes transactions via Stripe integration  
-  Features:  
-  ✓ Payment intent creation  
-  ✓ Webhook handling  
-  ✓ Transaction records
-
-- **Order Service**  
-  Manages complete order lifecycle:  
-  ✓ Order creation  
-  ✓ Status tracking  
-  ✓ Inventory updates
-
-- **Product Service**  
-  Maintains product catalog with:  
-  ✓ SKU management  
-  ✓ Pricing  
-  ✓ Digital asset storage
-
-### Infrastructure Components
-- **Notification Service**  
-  Handles real-time:  
-  ✓ Email alerts  
-  ✓ Payment confirmations  
-  ✓ Order updates
-
-- **Storage Service**  
-  MinIO-based solution for:  
-  ✓ Product assets  
-  ✓ User uploads  
-  ✓ Metadata storage
-
-### External Integrations
-- **Stripe API** - Payment processing
-- **PostgreSQL** - Primary data storage
-- **MinIO** - Object storage backend
-
-🚀 Getting Started
-Prerequisites
-Docker 20.10+
-
-Docker Compose 2.0+
-
-JDK 17
 
 🐳 Running with Docker
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-repo/digitalkeyhub.git
-cd digitalkeyhub
+git clone https://github.com/BogdanPryadko4853/online-shop-spring-boot.git
+cd online-shop-spring-boot
 ```
 Build and start containers:
 
@@ -109,12 +97,26 @@ Forward webhooks:
 ``` bash
 stripe listen --forward-to localhost:8080/api/payments/webhook
 ```
-Trigger test events:
+Test payment confirmation::
 ```bash
-stripe trigger payment_intent.succeeded
+stripe payment_intents confirm pi_3RrzUm2UEvzpXWoY18tA2LYx --payment-method=pm_card_visa --off-session=true
 ```
 
-🤝 Contributing
+
+## 📧 Email Configuration
+The system uses Thymeleaf templates for emails located in:
+
+Configuration properties:
+```
+properties
+spring.thymeleaf.email.prefix=classpath:/templates/email/
+spring.thymeleaf.cache=false
+spring.thymeleaf.encoding=UTF-8
+spring.thymeleaf.mode=HTML
+spring.thymeleaf.suffix=.html
+```
+
+## 🤝 Contributing
 Fork the repository
 
 Create your feature branch (git checkout -b feature/AmazingFeature)
