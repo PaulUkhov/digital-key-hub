@@ -6,18 +6,35 @@ A modular monolithic digital marketplace platform with integrated payment proces
 
 This is a modular monolithic application where each component is developed as a separate module within a single codebase:
 
+# 🏗️ Модульная структура проекта
+
+```bash
 digitalkeyhub/
-├── digitalkeyhub-api/ # Core API interfaces
-├── digitalkeyhub-app/ # Main application module
-├── digitalkeyhub-comment/ # Comment functionality
-├── digitalkeyhub-common-config/ # Shared configuration
-├── digitalkeyhub-notification/ # Notification services
-├── digitalkeyhub-order/ # Order management
-├── digitalkeyhub-payment/ # Payment processing
-├── digitalkeyhub-product/ # Product catalog
-├── digitalkeyhub-security/ # Security configurations
-├── digitalkeyhub-storage/ # File storage
-└── digitalkeyhub-user/ # User management
+├── 📁 digitalkeyhub-api/           # 🛠️  Core API 
+│
+├── 📁 digitalkeyhub-app/           # 🚀 Main application
+│
+├── 📁 digitalkeyhub-comment/       # 💬 Comment system
+│
+├── 📁 digitalkeyhub-common-config/ # ⚙️ Shared configs
+│
+├── 📁 digitalkeyhub-notification/  # ✉️ Notifications
+│
+├── 📁 digitalkeyhub-order/         # 📦 Order management
+│
+├── 📁 digitalkeyhub-payment/       # 💳 Payments
+│
+├── 📁 digitalkeyhub-product/       # 🛍️ Products
+│
+├── 📁 digitalkeyhub-security/      # 🔐 Security
+│
+├── 📁 digitalkeyhub-storage/       # 📂 File storage
+│ 
+└── 📁 digitalkeyhub-user/          # 👥 Users
+    ├── 📄 UserService.java         # User management
+    └── 📄 ProfileService.java      # Profile logic
+
+```
 
 
 ## 🚀 Key Features
@@ -61,7 +78,7 @@ spring.mail.properties.mail.smtp.ssl.trust=smtp.gmail.com
 ```
 
 
-🐳 Running with Docker
+## 🐳 Running with Docker
 Clone the repository:
 
 ```bash
@@ -83,7 +100,7 @@ MinIO Console: http://localhost:9001 (Login: minioadmin/minioadmin)
 PostgreSQL: localhost:5432
 
 
-💳 Payment Integration
+## 💳 Payment Integration
 To test Stripe payments locally:
 
 Install Stripe CLI:
@@ -127,5 +144,5 @@ Push to the branch (git push origin feature/AmazingFeature)
 
 Open a Pull Request
 
-📜 License
+## 📜 License
 Distributed under the MIT License. See LICENSE for more information.
