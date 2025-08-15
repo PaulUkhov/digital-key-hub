@@ -1,0 +1,3 @@
+stripe:
+  secret-key: your key
+  webhook-secret: your key
