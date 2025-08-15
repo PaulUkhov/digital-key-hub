@@ -7,8 +7,8 @@ import com.audio.exception.UserNotFoundException;
 import com.audio.mapper.UserMapper;
 import com.audio.repository.UserRepository;
 import com.audio.service.impl.UserServiceImpl;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Модульные тесты UserService")
 class UserServiceTest {
 
     private static final UUID USER_ID = UUID.randomUUID();

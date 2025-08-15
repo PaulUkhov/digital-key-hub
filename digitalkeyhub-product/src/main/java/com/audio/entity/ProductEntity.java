@@ -1,19 +1,20 @@
 package com.audio.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "products")
 @Getter
 @Setter
+@Builder
 public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
