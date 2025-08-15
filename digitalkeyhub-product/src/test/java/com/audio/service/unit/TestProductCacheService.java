@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Модульные тесты ProductServiceImpl")
+@DisplayName("Модульные тесты ProductCacheService")
 public class TestProductCacheService {
     @InjectMocks
     private ProductServiceImpl productServiceImpl;
@@ -64,7 +63,7 @@ public class TestProductCacheService {
                 .name(NAME)
                 .description(DESCRIPTION)
                 .price(PRICE)
-                .stockQuantity(0)
+                .stockQuantity(QUANTITY)
                 .sku(SKU)
                 .photoUrl(PHOTO)
                 .digitalContent(DIGITAL)
@@ -107,6 +106,7 @@ public class TestProductCacheService {
             assertThat(result)
                     .usingRecursiveComparison()
                     .isEqualTo(productCacheDto);
+            verify(productRepository, times(1)).findById(PRODUCT_ID);
 
         }
 
@@ -160,8 +160,7 @@ public class TestProductCacheService {
         @Test
         @DisplayName("Выкинуть ошибку при обновлении если продукт не существует  ")
         void whenProductNotExists_thenReturnsException() {
-            when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.of(productEntity));
-
+            when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> productCacheService.update(PRODUCT_ID, productServiceUpdateRequest)).isInstanceOf(ProductNotFoundException.class)
                     .hasMessage("Product not found for user ID: " + PRODUCT_ID);
             verify(productRepository).findById(PRODUCT_ID);
@@ -193,7 +192,7 @@ public class TestProductCacheService {
         void whenProductExists_updateStockQuantity() {
             when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.of(productEntity));
             when(productRepository.save(any(ProductEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
+            productEntity.setStockQuantity(0);
             productCacheService.updateStockQuantity(PRODUCT_ID, QUANTITY);
 
             verify(productRepository).save(productEntityCaptor.capture());
