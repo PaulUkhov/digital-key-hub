@@ -8,17 +8,17 @@ RUN mvn dependency:go-offline -B
 # Stage 2: Build application
 FROM dependencies as builder
 
-COPY digitalkeyhub-api/ digitalkeyhub-api/
-COPY digitalkeyhub-app/ digitalkeyhub-app/
-COPY digitalkeyhub-comment/ digitalkeyhub-comment/
-COPY digitalkeyhub-common-config/ digitalkeyhub-common-config/
-COPY digitalkeyhub-notification/ digitalkeyhub-notification/
-COPY digitalkeyhub-order/ digitalkeyhub-order/
-COPY digitalkeyhub-payment/ digitalkeyhub-payment/
-COPY digitalkeyhub-product/ digitalkeyhub-product/
-COPY digitalkeyhub-security/ digitalkeyhub-security/
-COPY digitalkeyhub-storage/ digitalkeyhub-storage/
-COPY digitalkeyhub-user/ digitalkeyhub-user/
+COPY digitalkeyhub-app digitalkeyhub-app
+COPY digitalkeyhub-user digitalkeyhub-user
+COPY digitalkeyhub-storage digitalkeyhub-storage
+COPY digitalkeyhub-api digitalkeyhub-api
+COPY digitalkeyhub-security digitalkeyhub-security
+COPY digitalkeyhub-comment digitalkeyhub-comment
+COPY digitalkeyhub-payment digitalkeyhub-payment
+COPY digitalkeyhub-product digitalkeyhub-product
+COPY digitalkeyhub-notification digitalkeyhub-notification
+COPY digitalkeyhub-order digitalkeyhub-order
+COPY digitalkeyhub-common-config digitalkeyhub-common-config
 
 RUN mvn package -pl digitalkeyhub-app -am \
     -DskipTests \
